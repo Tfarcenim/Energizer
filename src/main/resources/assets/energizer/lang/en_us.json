@@ -1,0 +1,14 @@
+{
+  "attribute.name.energizer.player.stamina": "Stamina",
+
+  "effect.energizer.vigor": "Vigor",
+  "effect.energizer.vigor.description": "Unlimited stamina for a short time.",
+
+  "item.minecraft.potion.effect.vigor_potion": "Potion of Vigor",
+  "item.minecraft.splash_potion.effect.vigor_potion": "Splash Potion of Vigor",
+  "item.minecraft.lingering_potion.effect.vigor_potion": "Lingering Potion of Vigor",
+
+  "item.minecraft.potion.effect.vigor_potion_long": "Potion of Vigor",
+  "item.minecraft.splash_potion.effect.vigor_potion_long": "Splash Potion of Vigor",
+  "item.minecraft.lingering_potion.effect.vigor_potion_long": "Lingering Potion of Vigor"
+}

@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "energizer",
+	"version": "${version}",
+	"name": "Energizer",
+	"description": "No more Hunger, Stamina instead !",
+	"authors": [
+		"Gaura"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/energizer/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.gaura.energizer.Energizer"
+		]
+	},
+	"mixins": [
+		"energizer.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

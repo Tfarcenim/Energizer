@@ -1,0 +1,144 @@
+package com.gaura.energizer.mixin;
+
+import com.gaura.energizer.Energizer;
+import com.gaura.energizer.utils.IPlayerEntity;
+import net.minecraft.advancement.criterion.Criteria;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraft.world.event.GameEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(PlayerEntity.class)
+public class PlayerEntityMixin implements IPlayerEntity {
+
+    @Overwrite
+    public boolean canConsume(boolean ignoreHunger) {
+
+        return true;
+    }
+
+    @Overwrite
+    public ItemStack eatFood(World world, ItemStack stack) {
+
+        PlayerEntity player = (PlayerEntity) (Object) this;
+
+        if (stack.isFood() && player instanceof ServerPlayerEntity serverPlayer && !world.isClient()) {
+
+            serverPlayer.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
+
+            world.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+
+            ((LivingEntityInvoker) serverPlayer).invokeApplyFoodEffects(stack, world, serverPlayer);
+
+            Criteria.CONSUME_ITEM.trigger(serverPlayer, stack);
+
+            serverPlayer.heal(stack.getItem().getFoodComponent().getHunger());
+
+            stack.decrement(1);
+
+            serverPlayer.emitGameEvent(GameEvent.EAT);
+        }
+
+        return stack;
+    }
+
+    @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
+    private static void addStaminaAttribute(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
+
+        cir.getReturnValue().add(Energizer.STAMINA_ATTRIBUTE);
+    }
+
+    @Inject(method = "initDataTracker", at = @At("TAIL"))
+    protected void addStaminaDataTracker(CallbackInfo ci) {
+
+        PlayerEntity player = (PlayerEntity) (Object) this;
+
+        player.getDataTracker().startTracking(Energizer.STAMINA_DATA, 1.0F);
+    }
+
+    public boolean stopSprint = false;
+
+    @Inject(method = "tickMovement", at = @At("HEAD"))
+    private void updateStamina(CallbackInfo ci) {
+
+        PlayerEntity player = (PlayerEntity) (Object) this;
+
+        if (!player.isCreative()) {
+
+            boolean hasHunger = player.hasStatusEffect(StatusEffects.HUNGER);
+            float staminaDecrease = hasHunger ? 1.0F : 0.5F;
+            float staminaIncrease = (hasHunger && stopSprint) ? 0.15F : hasHunger ? 0.25F : stopSprint ? 0.25F : 0.5F;
+
+            if (player.hasStatusEffect(Energizer.VIGOR)) {
+
+                this.setStamina(this.getMaxStamina());
+                this.stopSprint = false;
+            }
+            else {
+
+                if ((player.isSprinting() || player.isSwimming()) && !stopSprint) {
+
+                    this.setStamina(this.getStamina() - staminaDecrease);
+
+                    if (this.getStamina() <= 0.0F) {
+
+                        this.stopSprint = true;
+                    }
+                }
+                else if (this.getStamina() < this.getMaxStamina()) {
+
+                    this.setStamina(this.getStamina() + staminaIncrease);
+                }
+                else if (this.getStamina() == this.getMaxStamina()) {
+
+                    this.stopSprint = false;
+                }
+            }
+
+            if (this.stopSprint) {
+
+                player.setSprinting(false);
+            }
+        }
+    }
+
+    private float getStamina() {
+
+        PlayerEntity player = (PlayerEntity) (Object) this;
+
+        return player.getDataTracker().get(Energizer.STAMINA_DATA);
+    }
+
+    private void setStamina(float stamina) {
+
+        PlayerEntity player = (PlayerEntity) (Object) this;
+
+        player.getDataTracker().set(Energizer.STAMINA_DATA, MathHelper.clamp(stamina, 0.0F, this.getMaxStamina()));
+    }
+
+    private float getMaxStamina() {
+
+        PlayerEntity player = (PlayerEntity) (Object) this;
+
+        return (float) player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
+    }
+
+    @Override
+    public boolean getStopSprint() {
+
+        return this.stopSprint;
+    }
+}
