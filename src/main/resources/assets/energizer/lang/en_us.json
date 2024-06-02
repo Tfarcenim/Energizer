@@ -1,14 +1,36 @@
 {
+  "text.autoconfig.energizer.title": "Energizer",
+
+  "text.autoconfig.energizer.option.vigor_potion": "Vigor Potion",
+  "text.autoconfig.energizer.option.vigor_potion_long": "Vigor Potion Long",
+  "text.autoconfig.energizer.option.vigor_restore_stamina": "Vigor Restore Stamina",
+
+  "text.autoconfig.energizer.option.x_offset": "X Offset",
+  "text.autoconfig.energizer.option.y_offset": "Y Offset",
+
+  "text.autoconfig.energizer.option.stamina_blink": "Stamina Blink",
+
+  "text.autoconfig.energizer.option.heal_multiplier": "Heal Multiplier",
+
+  "text.autoconfig.energizer.option.stamina_decrease": "Stamina Decrease",
+  "text.autoconfig.energizer.option.stamina_decrease_hunger": "Stamina Decrease Hunger",
+
+  "text.autoconfig.energizer.option.stamina_increase": "Stamina Increase",
+  "text.autoconfig.energizer.option.stamina_increase_hunger": "Stamina Increase Hunger",
+  "text.autoconfig.energizer.option.stamina_increase_empty": "Stamina Increase Empty",
+  "text.autoconfig.energizer.option.stamina_increase_hunger_empty": "Stamina Increase Hunger Empty",
+
   "attribute.name.energizer.player.stamina": "Stamina",
 
   "effect.energizer.vigor": "Vigor",
-  "effect.energizer.vigor.description": "Unlimited stamina for a short time.",
 
   "item.minecraft.potion.effect.vigor_potion": "Potion of Vigor",
   "item.minecraft.splash_potion.effect.vigor_potion": "Splash Potion of Vigor",
   "item.minecraft.lingering_potion.effect.vigor_potion": "Lingering Potion of Vigor",
+  "item.minecraft.tipped_arrow.effect.vigor_potion": "Arrow of Vigor",
 
   "item.minecraft.potion.effect.vigor_potion_long": "Potion of Vigor",
   "item.minecraft.splash_potion.effect.vigor_potion_long": "Splash Potion of Vigor",
-  "item.minecraft.lingering_potion.effect.vigor_potion_long": "Lingering Potion of Vigor"
+  "item.minecraft.lingering_potion.effect.vigor_potion_long": "Lingering Potion of Vigor",
+  "item.minecraft.tipped_arrow.effect.vigor_potion_long": "Arrow of Vigor"
 }

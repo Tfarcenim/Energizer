@@ -35,8 +35,8 @@ public class InGameHudMixin {
 
         if (texture.equals(GUI_ICONS) && v == 27) {
 
-            x = (client.getWindow().getScaledWidth() / 2) + 82;
-            y = client.getWindow().getScaledHeight() - 39;
+            x = (client.getWindow().getScaledWidth() / 2) + Energizer.CONFIG.x_offset;
+            y = client.getWindow().getScaledHeight() + Energizer.CONFIG.y_offset;
 
             float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
             float currentStamina = client.player.getDataTracker().get(Energizer.STAMINA_DATA);
@@ -68,7 +68,7 @@ public class InGameHudMixin {
 
                 for (int i = 0; i < Math.min(backgroundsPerLine, 10); i++) {
 
-                    u = ((lastFullFillTime != -1) && ((client.world.getTime() - lastFullFillTime) < 3)) ? 9 : 0;
+                    u = ((lastFullFillTime != -1) && ((client.world.getTime() - lastFullFillTime) < 3) && Energizer.CONFIG.stamina_blink) ? 9 : 0;
                     context.drawTexture(STAMINA_ICONS, x - i * 8, y - line * yDecrement, u, 0, 9, 9, 81, 9);
                 }
 

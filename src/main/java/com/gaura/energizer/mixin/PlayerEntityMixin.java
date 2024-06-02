@@ -45,7 +45,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
             Criteria.CONSUME_ITEM.trigger(serverPlayer, stack);
 
-            serverPlayer.heal(stack.getItem().getFoodComponent().getHunger());
+            serverPlayer.heal(stack.getItem().getFoodComponent().getHunger() * Energizer.CONFIG.heal_multiplier);
 
             stack.decrement(1);
 
@@ -79,12 +79,16 @@ public class PlayerEntityMixin implements IPlayerEntity {
         if (!player.isCreative()) {
 
             boolean hasHunger = player.hasStatusEffect(StatusEffects.HUNGER);
-            float staminaDecrease = hasHunger ? 1.0F : 0.5F;
-            float staminaIncrease = (hasHunger && stopSprint) ? 0.15F : hasHunger ? 0.25F : stopSprint ? 0.25F : 0.5F;
+            float staminaDecrease = hasHunger ? Energizer.CONFIG.stamina_decrease_hunger : Energizer.CONFIG.stamina_decrease;
+            float staminaIncrease = (hasHunger && stopSprint) ? Energizer.CONFIG.stamina_increase_hunger_empty : hasHunger ? Energizer.CONFIG.stamina_increase_hunger : stopSprint ? Energizer.CONFIG.stamina_increase_empty : Energizer.CONFIG.stamina_increase;
 
             if (player.hasStatusEffect(Energizer.VIGOR)) {
 
-                this.setStamina(this.getMaxStamina());
+                if (Energizer.CONFIG.vigor_restore_stamina) {
+
+                    this.setStamina(this.getMaxStamina());
+                }
+
                 this.stopSprint = false;
             }
             else {
