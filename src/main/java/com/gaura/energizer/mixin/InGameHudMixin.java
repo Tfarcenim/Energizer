@@ -6,7 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -63,7 +62,7 @@ public class InGameHudMixin {
         boolean halfIcon = Math.floor(currentStamina) % 2 != 0;
         int backgroundsPerLine = (int) Math.ceil(maxStamina / 2);
 
-        if (hasVigor) {
+        if (hasVigor && Energizer.CONFIG.vigor_wave) {
 
             vigorIndex = client.inGameHud.getTicks() % MathHelper.ceil(maxStamina + 5.0F);
         }

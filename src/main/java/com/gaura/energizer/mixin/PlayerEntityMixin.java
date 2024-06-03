@@ -84,11 +84,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
             if (player.hasStatusEffect(Energizer.VIGOR)) {
 
-                if (Energizer.CONFIG.vigor_restore_stamina) {
-
-                    this.setStamina(this.getMaxStamina());
-                }
-
+                this.setStamina(this.getMaxStamina());
                 this.stopSprint = false;
             }
             else {

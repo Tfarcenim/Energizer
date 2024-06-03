@@ -38,8 +38,8 @@ public class Energizer implements ModInitializer {
 	public static final VigorEffect VIGOR = new VigorEffect(StatusEffectCategory.BENEFICIAL, 0x14B2FF);
 
 	// Vigor potions
-	public static final Potion VIGOR_POTION = new Potion(new StatusEffectInstance(VIGOR, 200, 0));		// 10 seconds
-	public static final Potion VIGOR_POTION_LONG = new Potion(new StatusEffectInstance(VIGOR, 600, 0));	// 30 seconds
+	public static final Potion VIGOR_POTION = new Potion(new StatusEffectInstance(VIGOR, CONFIG.vigor_potion_time * 20, 0));		// 10 seconds
+	public static final Potion VIGOR_POTION_LONG = new Potion(new StatusEffectInstance(VIGOR, CONFIG.vigor_potion_long_time * 20, 0));	// 30 seconds
 
 	@Override
 	public void onInitialize() {
