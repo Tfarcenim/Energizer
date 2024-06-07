@@ -82,7 +82,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
         PlayerEntity player = (PlayerEntity) (Object) this;
 
-        if (!player.isCreative()) {
+        if (!player.isCreative() && !player.isSpectator()) {
 
             boolean hasHunger = player.hasStatusEffect(StatusEffects.HUNGER);
             float staminaDecrease = hasHunger ? Energizer.CONFIG.stamina_decrease_hunger : Energizer.CONFIG.stamina_decrease;
@@ -95,22 +95,32 @@ public class PlayerEntityMixin implements IPlayerEntity {
             }
             else {
 
-                if ((player.isSprinting() || player.isSwimming()) && !stopSprint) {
+                if (player.hasVehicle()) {
 
-                    this.setStamina(this.getStamina() - staminaDecrease);
+                    if (this.getStamina() < this.getMaxStamina()) {
 
-                    if (this.getStamina() <= 0.0F) {
-
-                        this.stopSprint = true;
+                        this.setStamina(this.getStamina() + staminaIncrease);
                     }
                 }
-                else if (this.getStamina() < this.getMaxStamina()) {
+                else {
 
-                    this.setStamina(this.getStamina() + staminaIncrease);
-                }
-                else if (this.getStamina() == this.getMaxStamina()) {
+                    if ((player.isSprinting() || player.isSwimming()) && !stopSprint) {
 
-                    this.stopSprint = false;
+                        this.setStamina(this.getStamina() - staminaDecrease);
+
+                        if (this.getStamina() <= 0.0F) {
+
+                            this.stopSprint = true;
+                        }
+                    }
+                    else if (this.getStamina() < this.getMaxStamina()) {
+
+                        this.setStamina(this.getStamina() + staminaIncrease);
+                    }
+                    else if (this.getStamina() == this.getMaxStamina()) {
+
+                        this.stopSprint = false;
+                    }
                 }
             }
 

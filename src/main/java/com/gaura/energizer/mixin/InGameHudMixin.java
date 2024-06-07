@@ -52,66 +52,69 @@ public class InGameHudMixin {
 
         MinecraftClient client = MinecraftClient.getInstance();
 
-        int x = (client.getWindow().getScaledWidth() / 2) + Energizer.CONFIG.x_offset;
-        int y = client.getWindow().getScaledHeight() + Energizer.CONFIG.y_offset;
-        int vigorIndex = -1;
+        if (((InGameHudInvoker) this).invokeGetHeartCount(((InGameHudInvoker) this).invokeGetRiddenEntity()) == 0) {
 
-        float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
-        float currentStamina = client.player.getDataTracker().get(Energizer.STAMINA_DATA);
+            int x = (client.getWindow().getScaledWidth() / 2) + Energizer.CONFIG.x_offset;
+            int y = client.getWindow().getScaledHeight() + Energizer.CONFIG.y_offset;
+            int vigorIndex = -1;
 
-        boolean hasHunger = client.player.hasStatusEffect(StatusEffects.HUNGER);
-        boolean hasVigor = client.player.hasStatusEffect(Energizer.VIGOR);
-        boolean stopSprint = ((IPlayerEntity) client.player).getStopSprint();
+            float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
+            float currentStamina = client.player.getDataTracker().get(Energizer.STAMINA_DATA);
 
-        int lines = (int) Math.ceil(maxStamina / 20);
-        int fullIconsPerLine = (int) (currentStamina / 2);
-        boolean halfIcon = Math.floor(currentStamina) % 2 != 0;
-        int backgroundsPerLine = (int) Math.ceil(maxStamina / 2);
+            boolean hasHunger = client.player.hasStatusEffect(StatusEffects.HUNGER);
+            boolean hasVigor = client.player.hasStatusEffect(Energizer.VIGOR);
+            boolean stopSprint = ((IPlayerEntity) client.player).getStopSprint();
 
-        if (hasVigor && Energizer.CONFIG.vigor_wave) {
+            int lines = (int) Math.ceil(maxStamina / 20);
+            int fullIconsPerLine = (int) (currentStamina / 2);
+            boolean halfIcon = Math.floor(currentStamina) % 2 != 0;
+            int backgroundsPerLine = (int) Math.ceil(maxStamina / 2);
 
-            vigorIndex = client.inGameHud.getTicks() % MathHelper.ceil(maxStamina + 5.0F);
-        }
+            if (hasVigor && Energizer.CONFIG.vigor_wave) {
 
-        if (currentStamina == maxStamina) {
-
-            if (lastFullFillTime == -1) {
-
-                lastFullFillTime = client.inGameHud.getTicks();
-            }
-        }
-        else {
-
-            lastFullFillTime = -1;
-        }
-
-        int yDecrement = getYDecrement(maxStamina);
-
-        for (int line = 0; line < lines; line++, fullIconsPerLine -= 10, backgroundsPerLine -= 10) {
-
-            for (int i = 0; i < Math.min(backgroundsPerLine, 10); i++) {
-
-                int u = ((lastFullFillTime != -1) && ((client.inGameHud.getTicks() - lastFullFillTime) < 3) && Energizer.CONFIG.stamina_blink) ? 9 : 0;
-
-                int vigor = getVigorIndex(i, maxStamina, vigorIndex, line);
-
-                context.drawTexture(STAMINA_ICONS, x - i * 8, y - line * yDecrement - vigor, u, 0, 9, 9, 81, 9);
+                vigorIndex = client.inGameHud.getTicks() % MathHelper.ceil(maxStamina + 5.0F);
             }
 
-            for (int i = 0; i < Math.min(fullIconsPerLine, 10); i++) {
+            if (currentStamina == maxStamina) {
 
-                int u = hasVigor ? 72 : stopSprint ? 36 : hasHunger ? 54 : 18;
+                if (lastFullFillTime == -1) {
 
-                int vigor = getVigorIndex(i, maxStamina, vigorIndex, line);
+                    lastFullFillTime = client.inGameHud.getTicks();
+                }
+            }
+            else {
 
-                context.drawTexture(STAMINA_ICONS, x - i * 8, y - line * yDecrement - vigor, u, 0, 9, 9, 81, 9);
+                lastFullFillTime = -1;
             }
 
-            if (halfIcon && fullIconsPerLine < 10) {
+            int yDecrement = getYDecrement(maxStamina);
 
-                int u = stopSprint ? 45 : hasHunger ? 63 : 27;
-                context.drawTexture(STAMINA_ICONS, x - fullIconsPerLine * 8, y - line * yDecrement, u, 0, 9, 9, 81, 9);
-                halfIcon = false;
+            for (int line = 0; line < lines; line++, fullIconsPerLine -= 10, backgroundsPerLine -= 10) {
+
+                for (int i = 0; i < Math.min(backgroundsPerLine, 10); i++) {
+
+                    int u = ((lastFullFillTime != -1) && ((client.inGameHud.getTicks() - lastFullFillTime) < 3) && Energizer.CONFIG.stamina_blink) ? 9 : 0;
+
+                    int vigor = getVigorIndex(i, maxStamina, vigorIndex, line);
+
+                    context.drawTexture(STAMINA_ICONS, x - i * 8, y - line * yDecrement - vigor, u, 0, 9, 9, 81, 9);
+                }
+
+                for (int i = 0; i < Math.min(fullIconsPerLine, 10); i++) {
+
+                    int u = hasVigor ? 72 : stopSprint ? 36 : hasHunger ? 54 : 18;
+
+                    int vigor = getVigorIndex(i, maxStamina, vigorIndex, line);
+
+                    context.drawTexture(STAMINA_ICONS, x - i * 8, y - line * yDecrement - vigor, u, 0, 9, 9, 81, 9);
+                }
+
+                if (halfIcon && fullIconsPerLine < 10) {
+
+                    int u = stopSprint ? 45 : hasHunger ? 63 : 27;
+                    context.drawTexture(STAMINA_ICONS, x - fullIconsPerLine * 8, y - line * yDecrement, u, 0, 9, 9, 81, 9);
+                    halfIcon = false;
+                }
             }
         }
     }
