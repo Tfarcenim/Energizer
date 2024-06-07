@@ -1,22 +1,32 @@
 package com.gaura.energizer.mixin;
 
+import com.gaura.energizer.Energizer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HungerManager.class)
 public class HungerManagerMixin {
 
-    @Overwrite
-    public void update(PlayerEntity player) {
+    @Inject(method = "update", at = @At("HEAD"), cancellable = true)
+    public void update(PlayerEntity player, CallbackInfo ci) {
 
-        // Do nothing to prevent hunger from updating
+        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID)) {
+
+            ci.cancel();
+        }
     }
 
-    @Overwrite
-    public void addExhaustion(float exhaustion) {
+    @Inject(method = "addExhaustion", at = @At("HEAD"), cancellable = true)
+    public void addExhaustion(float exhaustion, CallbackInfo ci) {
 
-        // Do nothing to prevent exhaustion from updating
+        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID)) {
+
+            ci.cancel();
+        }
     }
 }

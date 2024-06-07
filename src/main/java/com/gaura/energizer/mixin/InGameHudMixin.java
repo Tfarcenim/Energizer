@@ -10,33 +10,36 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
 
-    private static final Identifier GUI_ICONS = new Identifier("textures/gui/icons.png");
     private static final Identifier STAMINA_ICONS = new Identifier(Energizer.MOD_ID, "textures/stamina/stamina_icons.png");
 
     private int lastFullFillTime = -1;
 
-    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V"))
-    private void renderStaminaBarAndAdjustAirBar(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+    @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 6), index = 2)
+    private int adjustAirBarY(int y) {
 
         MinecraftClient client = MinecraftClient.getInstance();
 
-        if (texture.equals(GUI_ICONS) && v == 18) {
+        float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
+        int staminaLines = (int) Math.ceil(maxStamina / 20);
+        int yDecrement = getYDecrement(maxStamina);
 
-            float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
-            int staminaLines = (int) Math.ceil(maxStamina / 20);
-            int yDecrement = getYDecrement(maxStamina);
+        return y - (staminaLines - 1) * yDecrement;
+    }
 
-            y -= (staminaLines - 1) * yDecrement;
-        }
+    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V"))
+    private void removeHungerBar(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
 
-        if (texture.equals(GUI_ICONS) && v == 27) {
+        if (v == 27) {
 
-            renderStaminaBar(context, client);
+            // Do nothing to avoid rendering the hunger bar
         }
         else {
 
@@ -44,7 +47,10 @@ public class InGameHudMixin {
         }
     }
 
-    private void renderStaminaBar(DrawContext context, MinecraftClient client) {
+    @Inject(method = "renderStatusBars", at = @At("TAIL"))
+    private void renderStaminaBar(DrawContext context, CallbackInfo ci) {
+
+        MinecraftClient client = MinecraftClient.getInstance();
 
         int x = (client.getWindow().getScaledWidth() / 2) + Energizer.CONFIG.x_offset;
         int y = client.getWindow().getScaledHeight() + Energizer.CONFIG.y_offset;

@@ -2,6 +2,7 @@ package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
 import com.gaura.energizer.utils.IPlayerEntity;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.effect.StatusEffects;
@@ -15,7 +16,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -24,35 +24,41 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlayerEntity.class)
 public class PlayerEntityMixin implements IPlayerEntity {
 
-    @Overwrite
-    public boolean canConsume(boolean ignoreHunger) {
+    @Inject(method = "canConsume", at = @At("RETURN"), cancellable = true)
+    public void canConsume(boolean ignoreHunger, CallbackInfoReturnable<Boolean> cir) {
 
-        return true;
+        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID)) {
+
+            cir.setReturnValue(true);
+        }
     }
 
-    @Overwrite
-    public ItemStack eatFood(World world, ItemStack stack) {
+    @Inject(method = "eatFood", at = @At("HEAD"), cancellable = true)
+    public void eatFood(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
 
-        PlayerEntity player = (PlayerEntity) (Object) this;
+        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID)) {
 
-        if (stack.isFood() && player instanceof ServerPlayerEntity serverPlayer && !world.isClient()) {
+            PlayerEntity player = (PlayerEntity) (Object) this;
 
-            serverPlayer.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
+            if (stack.isFood() && player instanceof ServerPlayerEntity serverPlayer && !world.isClient()) {
 
-            world.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+                serverPlayer.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
 
-            ((LivingEntityInvoker) serverPlayer).invokeApplyFoodEffects(stack, world, serverPlayer);
+                world.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
 
-            Criteria.CONSUME_ITEM.trigger(serverPlayer, stack);
+                ((LivingEntityInvoker) serverPlayer).invokeApplyFoodEffects(stack, world, serverPlayer);
 
-            serverPlayer.heal(stack.getItem().getFoodComponent().getHunger() * Energizer.CONFIG.heal_multiplier);
+                Criteria.CONSUME_ITEM.trigger(serverPlayer, stack);
 
-            stack.decrement(1);
+                serverPlayer.heal(stack.getItem().getFoodComponent().getHunger() * Energizer.CONFIG.heal_multiplier);
 
-            serverPlayer.emitGameEvent(GameEvent.EAT);
+                stack.decrement(1);
+
+                serverPlayer.emitGameEvent(GameEvent.EAT);
+            }
+
+            cir.setReturnValue(stack);
         }
-
-        return stack;
     }
 
     @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
