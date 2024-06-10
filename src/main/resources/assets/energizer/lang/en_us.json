@@ -29,7 +29,6 @@
   "text.autoconfig.energizer.option.vigor_potion_time": "Vigor Potion Time",
   "text.autoconfig.energizer.option.vigor_potion_long": "Vigor Potion Long",
   "text.autoconfig.energizer.option.vigor_potion_long_time": "Vigor Potion Long Time",
-  "text.autoconfig.energizer.option.vigor_potion_color": "Vigor Potion Color",
 
   "text.autoconfig.energizer.category.heal": "Heal",
   "text.autoconfig.energizer.option.heal_multiplier": "Heal Multiplier",
