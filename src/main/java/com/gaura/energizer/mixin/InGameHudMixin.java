@@ -75,20 +75,30 @@ public class InGameHudMixin {
 
     // region HUNGER BAR
 
-    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V"))
-    private void removeHungerBar(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 3))
+    private void removeHungerBarFirst(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
 
-        if (v == 27 && Energizer.CONFIG.remove_hunger) {
-
-            // Do nothing to avoid rendering the hunger bar
-        }
-        else if (v == 27) {
+        if (!Energizer.CONFIG.remove_hunger) {
 
             context.drawTexture(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
         }
-        else {
+    }
 
-            context.drawTexture(texture, x, y, u, v, width, height);
+    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 4))
+    private void removeHungerBarSecond(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+
+        if (!Energizer.CONFIG.remove_hunger) {
+
+            context.drawTexture(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
+        }
+    }
+
+    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 5))
+    private void removeHungerBarThird(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+
+        if (!Energizer.CONFIG.remove_hunger) {
+
+            context.drawTexture(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
         }
     }
 
