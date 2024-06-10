@@ -3,7 +3,7 @@
 	"id": "energizer",
 	"version": "${version}",
 	"name": "Energizer",
-	"description": "No more Hunger, Stamina instead !",
+	"description": "No more Hunger (optional), Stamina instead !",
 	"authors": [
 		"Gaura"
 	],

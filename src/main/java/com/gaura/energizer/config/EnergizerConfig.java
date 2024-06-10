@@ -6,7 +6,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 @Config(name = "energizer")
-@Config.Gui.Background("minecraft:textures/block/light_gray_wool.png")
+@Config.Gui.Background("minecraft:textures/block/yellow_wool.png")
 public class EnergizerConfig implements ConfigData {
 
     // STAMINA
@@ -45,11 +45,43 @@ public class EnergizerConfig implements ConfigData {
 
     @ConfigEntry.Category("stamina")
     @Comment("The x offset for the stamina bar.")
-    public int x_offset = 82;
+    public int x_offset_stamina_bar = 0;
 
     @ConfigEntry.Category("stamina")
     @Comment("The y offset for the stamina bar.")
-    public int y_offset = -39;
+    public int y_offset_stamina_bar = 0;
+
+    // HUNGER
+
+    @ConfigEntry.Category("hunger")
+    @Comment("If the hunger should be removed.")
+    public boolean remove_hunger = true;
+
+    @ConfigEntry.Category("hunger")
+    @Comment("If the player can sprint when the hunger bar is below 6 (3 icons).")
+    public boolean can_continue_sprinting = false;
+
+    @ConfigEntry.Category("hunger")
+    @Comment("The x offset for the hunger bar.")
+    public int x_offset_hunger_bar = 0;
+
+    @ConfigEntry.Category("hunger")
+    @Comment("The y offset for the hunger bar.")
+    public int y_offset_hunger_bar = 0;
+
+    // AIR
+
+    @ConfigEntry.Category("air")
+    @Comment("If the air bar should be synced with the stamina bar (on top of it).")
+    public boolean sync_with_stamina_bar = true;
+
+    @ConfigEntry.Category("air")
+    @Comment("The x offset for the air bar.")
+    public int x_offset_air_bar = 0;
+
+    @ConfigEntry.Category("air")
+    @Comment("The y offset for the air bar.")
+    public int y_offset_air_bar = 0;
 
     // POTION
 
@@ -76,6 +108,6 @@ public class EnergizerConfig implements ConfigData {
     // HEAL
 
     @ConfigEntry.Category("heal")
-    @Comment("The multiplier for the amount of health restored by food.")
+    @Comment("The multiplier for the amount of health restored by food (do nothing if 'Remove Hunger' is disabled).")
     public int heal_multiplier = 1;
 }

@@ -18,12 +18,49 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
 
+    // region VARIABLES
+
     private static final Identifier STAMINA_ICONS = new Identifier(Energizer.MOD_ID, "textures/stamina/stamina_icons.png");
+
+    private static final int X_OFFSET = 82;
+    private static final int Y_OFFSET = 39;
 
     private int lastFullFillTime = -1;
 
+    // endregion
+
+    // region AIR BAR
+
+    @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 6), index = 1)
+    private int adjustAirBarXFirst(int x) {
+
+        return getAirX(x);
+    }
+
     @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 6), index = 2)
-    private int adjustAirBarY(int y) {
+    private int adjustAirBarYFirst(int y) {
+
+        return getAirY(y);
+    }
+
+    @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 7), index = 1)
+    private int adjustAirBarXSecond(int x) {
+
+        return getAirX(x);
+    }
+
+    @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 7), index = 2)
+    private int adjustAirBarYSecond(int y) {
+
+        return getAirY(y);
+    }
+
+    private int getAirX(int x) {
+
+        return x + Energizer.CONFIG.x_offset_air_bar + (Energizer.CONFIG.sync_with_stamina_bar ? Energizer.CONFIG.x_offset_stamina_bar : 0);
+    }
+
+    private int getAirY(int y) {
 
         MinecraftClient client = MinecraftClient.getInstance();
 
@@ -31,21 +68,33 @@ public class InGameHudMixin {
         int staminaLines = (int) Math.ceil(maxStamina / 20);
         int yDecrement = getYDecrement(maxStamina);
 
-        return y - (staminaLines - 1) * yDecrement;
+        return y - Energizer.CONFIG.y_offset_air_bar + (Energizer.CONFIG.sync_with_stamina_bar ? - (staminaLines - 1) * yDecrement - Energizer.CONFIG.y_offset_stamina_bar : 0);
     }
+
+    // endregion
+
+    // region HUNGER BAR
 
     @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V"))
     private void removeHungerBar(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
 
-        if (v == 27) {
+        if (v == 27 && Energizer.CONFIG.remove_hunger) {
 
             // Do nothing to avoid rendering the hunger bar
+        }
+        else if (v == 27) {
+
+            context.drawTexture(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
         }
         else {
 
             context.drawTexture(texture, x, y, u, v, width, height);
         }
     }
+
+    // endregion
+
+    // region STAMINA BAR
 
     @Inject(method = "renderStatusBars", at = @At("TAIL"))
     private void renderStaminaBar(DrawContext context, CallbackInfo ci) {
@@ -54,8 +103,9 @@ public class InGameHudMixin {
 
         if (((InGameHudInvoker) this).invokeGetHeartCount(((InGameHudInvoker) this).invokeGetRiddenEntity()) == 0) {
 
-            int x = (client.getWindow().getScaledWidth() / 2) + Energizer.CONFIG.x_offset;
-            int y = client.getWindow().getScaledHeight() + Energizer.CONFIG.y_offset;
+            int x = (client.getWindow().getScaledWidth() / 2) + X_OFFSET + Energizer.CONFIG.x_offset_stamina_bar;
+            int y = client.getWindow().getScaledHeight() - Y_OFFSET - Energizer.CONFIG.y_offset_stamina_bar;
+
             int vigorIndex = -1;
 
             float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
@@ -155,4 +205,6 @@ public class InGameHudMixin {
 
         return yDecrement;
     }
+
+    // endregion
 }

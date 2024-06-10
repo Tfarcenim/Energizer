@@ -15,7 +15,7 @@ public class HungerManagerMixin {
     @Inject(method = "update", at = @At("HEAD"), cancellable = true)
     public void update(PlayerEntity player, CallbackInfo ci) {
 
-        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID)) {
+        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
 
             ci.cancel();
         }
@@ -24,7 +24,7 @@ public class HungerManagerMixin {
     @Inject(method = "addExhaustion", at = @At("HEAD"), cancellable = true)
     public void addExhaustion(float exhaustion, CallbackInfo ci) {
 
-        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID)) {
+        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
 
             ci.cancel();
         }

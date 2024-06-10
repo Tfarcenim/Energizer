@@ -2,31 +2,38 @@
   "text.autoconfig.energizer.title": "Energizer",
 
   "text.autoconfig.energizer.category.stamina": "Stamina",
-
   "text.autoconfig.energizer.option.stamina_decrease": "Stamina Decrease",
   "text.autoconfig.energizer.option.stamina_decrease_hunger": "Stamina Decrease Hunger",
-
   "text.autoconfig.energizer.option.stamina_increase": "Stamina Increase",
   "text.autoconfig.energizer.option.stamina_increase_hunger": "Stamina Increase Hunger",
   "text.autoconfig.energizer.option.stamina_increase_empty": "Stamina Increase Empty",
   "text.autoconfig.energizer.option.stamina_increase_hunger_empty": "Stamina Increase Hunger Empty",
-
   "text.autoconfig.energizer.option.stamina_blink": "Stamina Blink",
   "text.autoconfig.energizer.option.vigor_wave": "Vigor Wave",
+  "text.autoconfig.energizer.option.x_offset_stamina_bar": "X Offset",
+  "text.autoconfig.energizer.option.y_offset_stamina_bar": "Y Offset",
 
-  "text.autoconfig.energizer.option.x_offset": "X Offset",
-  "text.autoconfig.energizer.option.y_offset": "Y Offset",
+  "text.autoconfig.energizer.category.hunger": "Hunger",
+  "text.autoconfig.energizer.option.remove_hunger": "Remove Hunger",
+  "text.autoconfig.energizer.option.can_continue_sprinting": "Can Continue Sprinting",
+  "text.autoconfig.energizer.option.x_offset_hunger_bar": "X Offset",
+  "text.autoconfig.energizer.option.y_offset_hunger_bar": "Y Offset",
+
+  "text.autoconfig.energizer.category.air": "Air",
+  "text.autoconfig.energizer.option.sync_with_stamina_bar": "Sync with Stamina Bar",
+  "text.autoconfig.energizer.option.x_offset_air_bar": "X Offset",
+  "text.autoconfig.energizer.option.y_offset_air_bar": "Y Offset",
 
   "text.autoconfig.energizer.category.potion": "Vigor Potion",
-
   "text.autoconfig.energizer.option.vigor_potion": "Vigor Potion",
   "text.autoconfig.energizer.option.vigor_potion_time": "Vigor Potion Time",
   "text.autoconfig.energizer.option.vigor_potion_long": "Vigor Potion Long",
   "text.autoconfig.energizer.option.vigor_potion_long_time": "Vigor Potion Long Time",
+  "text.autoconfig.energizer.option.vigor_potion_color": "Vigor Potion Color",
 
   "text.autoconfig.energizer.category.heal": "Heal",
-
   "text.autoconfig.energizer.option.heal_multiplier": "Heal Multiplier",
+
 
   "attribute.name.energizer.player.stamina": "Stamina",
 

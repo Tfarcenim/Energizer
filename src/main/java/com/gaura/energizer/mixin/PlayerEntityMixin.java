@@ -27,7 +27,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Inject(method = "canConsume", at = @At("RETURN"), cancellable = true)
     public void canConsume(boolean ignoreHunger, CallbackInfoReturnable<Boolean> cir) {
 
-        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID)) {
+        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
 
             cir.setReturnValue(true);
         }
@@ -36,7 +36,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Inject(method = "eatFood", at = @At("HEAD"), cancellable = true)
     public void eatFood(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
 
-        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID)) {
+        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
 
             PlayerEntity player = (PlayerEntity) (Object) this;
 
