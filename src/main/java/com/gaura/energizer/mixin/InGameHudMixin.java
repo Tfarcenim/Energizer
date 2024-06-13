@@ -31,28 +31,16 @@ public class InGameHudMixin {
 
     // region AIR BAR
 
-    @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 6), index = 1)
-    private int adjustAirBarXFirst(int x) {
+    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 6))
+    private void adjustAirBarFirst(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
 
-        return getAirX(x);
+        context.drawTexture(texture, getAirX(x), getAirY(y), u, v, width, height);
     }
 
-    @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 6), index = 2)
-    private int adjustAirBarYFirst(int y) {
+    @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 7))
+    private void adjustAirBarSecond(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
 
-        return getAirY(y);
-    }
-
-    @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 7), index = 1)
-    private int adjustAirBarXSecond(int x) {
-
-        return getAirX(x);
-    }
-
-    @ModifyArg(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 7), index = 2)
-    private int adjustAirBarYSecond(int y) {
-
-        return getAirY(y);
+        context.drawTexture(texture, getAirX(x), getAirY(y), u, v, width, height);
     }
 
     private int getAirX(int x) {
