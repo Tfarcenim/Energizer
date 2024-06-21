@@ -160,14 +160,4 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
         return this.stopSprint;
     }
-    /*
-    @Inject(method = "jump", at = @At("HEAD"), cancellable = true)
-    private void jump(CallbackInfo ci) {
-
-        if (this.stopSprint) {
-
-            ci.cancel();
-        }
-    }
-    */
 }
