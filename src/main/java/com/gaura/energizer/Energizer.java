@@ -22,12 +22,16 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
+import java.util.logging.Logger;
+
 public class Energizer implements ModInitializer {
 
 	public static final String MOD_ID = "energizer";
 	public static final String HEARTY_MEALS_MOD_ID = "heartymeals";
 
 	public static EnergizerConfig CONFIG = new EnergizerConfig();
+
+	public static final Logger LOGGER = Logger.getLogger(MOD_ID);
 
 	// Stamina attribute
 	public static final EntityAttribute STAMINA_ATTRIBUTE = new ClampedEntityAttribute("attribute.name." + MOD_ID + ".player.stamina", 20, 1, 1024).setTracked(true);

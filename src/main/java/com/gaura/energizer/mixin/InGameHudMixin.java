@@ -11,7 +11,6 @@ import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -111,7 +110,7 @@ public class InGameHudMixin {
 
             boolean hasHunger = client.player.hasStatusEffect(StatusEffects.HUNGER);
             boolean hasVigor = client.player.hasStatusEffect(Energizer.VIGOR);
-            boolean stopSprint = ((IPlayerEntity) client.player).getStopSprint();
+            boolean stopSprint = ((IPlayerEntity) client.player).getStopSprint().getBoolean("stopSprint");
 
             int lines = (int) Math.ceil(maxStamina / 20);
             int fullIconsPerLine = (int) (currentStamina / 2);
