@@ -1,20 +1,21 @@
 {
-	"required": true,
-	"package": "com.gaura.energizer.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"BrewingRecipeRegistryInvoker",
-		"ClientPlayerEntityMixin",
-		"EntityMixin",
-		"HungerManagerMixin",
-		"InGameHudInvoker",
-		"InGameHudMixin",
-		"InGameHudMixinHungerAndAir",
-		"LivingEntityInvoker",
-		"PlayerEntityMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"plugin": "com.gaura.energizer.mixin.EnergizerMixinPlugin"
+  "required": true,
+  "package": "com.gaura.energizer.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "BrewingRecipeRegistryInvoker",
+    "CakeBlockMixin",
+    "ClientPlayerEntityMixin",
+    "EntityMixin",
+    "HungerManagerMixin",
+    "InGameHudInvoker",
+    "InGameHudMixin",
+    "InGameHudMixinHungerAndAir",
+    "LivingEntityInvoker",
+    "PlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "plugin": "com.gaura.energizer.mixin.EnergizerMixinPlugin"
 }

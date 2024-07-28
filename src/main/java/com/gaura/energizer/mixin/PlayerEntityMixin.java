@@ -2,6 +2,7 @@ package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
 import com.gaura.energizer.EnergizerClient;
+import com.gaura.energizer.config.HealFood;
 import com.gaura.energizer.utils.IPlayerEntity;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -15,10 +16,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -63,7 +66,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
                 Criteria.CONSUME_ITEM.trigger(serverPlayer, stack);
 
-                serverPlayer.heal(stack.getItem().getFoodComponent().getHunger() * Energizer.CONFIG.heal_multiplier);
+                serverPlayer.heal(this.getHealAmount(stack) * Energizer.CONFIG.heal_multiplier);
 
                 stack.decrement(1);
 
@@ -72,6 +75,19 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
             cir.setReturnValue(stack);
         }
+    }
+
+    private int getHealAmount(ItemStack stack) {
+
+        for (HealFood food : Energizer.CONFIG.healFoods) {
+
+            if (stack.getItem() == Registries.ITEM.get(new Identifier(food.food))) {
+
+                return food.heal_amount;
+            }
+        }
+
+        return 0;
     }
 
     @Inject(method = "createPlayerAttributes", at = @At("RETURN"))

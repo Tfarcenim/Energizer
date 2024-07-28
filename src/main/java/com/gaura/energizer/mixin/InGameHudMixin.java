@@ -1,11 +1,19 @@
 package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
+import com.gaura.energizer.config.HealFood;
 import com.gaura.energizer.utils.IPlayerEntity;
+import com.gaura.energizer.utils.MethodeHelper;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +23,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
-
 
     private static final Identifier STAMINA_ICONS = new Identifier(Energizer.MOD_ID, "textures/stamina/stamina_icons.png");
 
@@ -65,7 +72,7 @@ public class InGameHudMixin {
                 lastFullFillTime = -1;
             }
 
-            int yDecrement = getYDecrement(maxStamina);
+            int yDecrement = MethodeHelper.getYDecrement(maxStamina);
 
             for (int line = 0; line < lines; line++, fullIconsPerLine -= 10, backgroundsPerLine -= 10) {
 
@@ -109,28 +116,47 @@ public class InGameHudMixin {
         return index;
     }
 
-    private int getYDecrement(float maxStamina) {
+    private static final Identifier HEART_ICONS = new Identifier("textures/gui/icons.png");
 
-        int yDecrement;
+    @Inject(method = "renderHealthBar", at = @At("TAIL"))
+    private void renderHealingHearts(DrawContext context, PlayerEntity player, int x, int y, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking, CallbackInfo ci) {
 
-        if (maxStamina <= 40) {
-            yDecrement = 10;
-        } else if (maxStamina <= 60) {
-            yDecrement = 9;
-        } else if (maxStamina <= 80) {
-            yDecrement = 8;
-        } else if (maxStamina <= 100) {
-            yDecrement = 7;
-        } else if (maxStamina <= 120) {
-            yDecrement = 6;
-        } else if (maxStamina <= 140) {
-            yDecrement = 5;
-        } else if (maxStamina <= 160) {
-            yDecrement = 4;
-        } else {
-            yDecrement = 3;
+        MinecraftClient client = MinecraftClient.getInstance();
+
+        if (client.player == null || client.player.getHealth() == client.player.getMaxHealth()) return;
+
+        ItemStack itemStack = client.player.getMainHandStack();
+        int healingAmount = MethodeHelper.getHealAmount(itemStack);
+
+        if (healingAmount > 0) {
+
+            int currentHealth = (int) client.player.getHealth();
+            int totalHealth = Math.min(currentHealth + healingAmount, (int) client.player.getMaxHealth());
+            int fullHearts = totalHealth / 2;
+            boolean halfHeart = totalHealth % 2 == 1;
+
+            boolean shouldBlink = (client.inGameHud.getTicks() % 30) < 15;
+            float alpha = shouldBlink ? 0.5F : 0.25F;
+
+            RenderSystem.enableBlend();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+
+            int yDecrement = MethodeHelper.getYDecrement(maxHealth);
+
+            for (int i = currentHealth / 2; i < fullHearts; i++) {
+                int row = i / 10;
+                int col = i % 10;
+                context.drawTexture(HEART_ICONS, x + col * 8, y - row * yDecrement, 52, 0, 9, 9);
+            }
+
+            if (halfHeart) {
+                int row = fullHearts / 10;
+                int col = fullHearts % 10;
+                context.drawTexture(HEART_ICONS, x + col * 8, y - row * yDecrement, 61, 0, 9, 9);
+            }
+
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.disableBlend();
         }
-
-        return yDecrement;
     }
 }

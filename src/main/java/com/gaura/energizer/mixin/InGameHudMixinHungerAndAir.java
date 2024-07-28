@@ -1,6 +1,7 @@
 package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
+import com.gaura.energizer.utils.MethodeHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -62,33 +63,8 @@ public class InGameHudMixinHungerAndAir {
 
         float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
         int staminaLines = (int) Math.ceil(maxStamina / 20);
-        int yDecrement = getYDecrement(maxStamina);
+        int yDecrement = MethodeHelper.getYDecrement(maxStamina);
 
         return y - Energizer.CONFIG.y_offset_air_bar + (Energizer.CONFIG.sync_with_stamina_bar ? - (staminaLines - 1) * yDecrement - Energizer.CONFIG.y_offset_stamina_bar : 0);
-    }
-
-    private int getYDecrement(float maxStamina) {
-
-        int yDecrement;
-
-        if (maxStamina <= 40) {
-            yDecrement = 10;
-        } else if (maxStamina <= 60) {
-            yDecrement = 9;
-        } else if (maxStamina <= 80) {
-            yDecrement = 8;
-        } else if (maxStamina <= 100) {
-            yDecrement = 7;
-        } else if (maxStamina <= 120) {
-            yDecrement = 6;
-        } else if (maxStamina <= 140) {
-            yDecrement = 5;
-        } else if (maxStamina <= 160) {
-            yDecrement = 4;
-        } else {
-            yDecrement = 3;
-        }
-
-        return yDecrement;
     }
 }
