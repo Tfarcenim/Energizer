@@ -1,9 +1,11 @@
 package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
+import com.gaura.energizer.utils.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CakeBlock;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldAccess;
@@ -20,7 +22,7 @@ public class CakeBlockMixin {
 
         if (Energizer.CONFIG.remove_hunger && (player.getHealth() < player.getMaxHealth())) {
 
-            player.heal(2.0F);
+            player.heal(Utils.getHealAmount(Items.CAKE.getDefaultStack()));
         }
     }
 }

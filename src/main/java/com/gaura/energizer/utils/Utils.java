@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
-public class MethodeHelper {
+public class Utils {
 
     public static int getYDecrement(float maxStamina) {
 
@@ -35,7 +35,7 @@ public class MethodeHelper {
 
     public static int getHealAmount(ItemStack stack) {
 
-        for (HealFood food : Energizer.CONFIG.healFoods) {
+        for (HealFood food : Energizer.CONFIG.healing_food_list) {
 
             if (stack.getItem() == Registries.ITEM.get(new Identifier(food.food))) {
 

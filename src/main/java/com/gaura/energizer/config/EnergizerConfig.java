@@ -84,6 +84,10 @@ public class EnergizerConfig implements ConfigData {
     public float slower_walk_multiplier = 0.5F;
 
     @ConfigEntry.Category("stamina")
+    @Comment("If Stamina should be disabled in Peaceful.")
+    public boolean disable_stamina_in_peaceful = true;
+
+    @ConfigEntry.Category("stamina")
     @Comment("The x offset for the stamina bar.")
     public int x_offset_stamina_bar = 0;
 
@@ -148,11 +152,7 @@ public class EnergizerConfig implements ConfigData {
     // HEAL
 
     @ConfigEntry.Category("heal")
-    @Comment("The multiplier for the amount of health restored by food (do nothing if 'Remove Hunger' is disabled).")
-    public int heal_multiplier = 1;
-
-    @ConfigEntry.Category("heal")
-    public HealFood[] healFoods = {
+    public HealFood[] healing_food_list = {
 
             new HealFood("minecraft:apple", 2),
             new HealFood("minecraft:baked_potato", 3),
@@ -160,6 +160,7 @@ public class EnergizerConfig implements ConfigData {
             new HealFood("minecraft:beetroot", 1),
             new HealFood("minecraft:beetroot_soup", 5),
             new HealFood("minecraft:bread", 3),
+            new HealFood("minecraft:cake", 1),
             new HealFood("minecraft:carrot", 2),
             new HealFood("minecraft:chicken", 1),
             new HealFood("minecraft:chorus_fruit", 1),

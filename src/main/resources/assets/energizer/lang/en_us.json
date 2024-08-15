@@ -20,6 +20,7 @@
   "text.autoconfig.energizer.option.lower_jump_multiplier": "Lower Jump Multiplier",
   "text.autoconfig.energizer.option.slower_walk": "Slower Walk",
   "text.autoconfig.energizer.option.slower_walk_multiplier": "Slower Walk Multiplier",
+  "text.autoconfig.energizer.option.disable_stamina_in_peaceful": "Disable Stamina In Peaceful",
   "text.autoconfig.energizer.option.x_offset_stamina_bar": "X Offset",
   "text.autoconfig.energizer.option.y_offset_stamina_bar": "Y Offset",
 
@@ -41,8 +42,10 @@
   "text.autoconfig.energizer.option.vigor_potion_long_time": "Vigor Potion Long Time",
 
   "text.autoconfig.energizer.category.heal": "Heal",
-  "text.autoconfig.energizer.option.heal_multiplier": "Heal Multiplier",
-
+  "text.autoconfig.energizer.option.healing_food_list": "Healing Food List",
+  "text.autoconfig.energizer.option.HealFood": "Entry",
+  "text.autoconfig.energizer.option.HealFood.food": "Food",
+  "text.autoconfig.energizer.option.HealFood.heal_amount": "Heal Amount",
 
   "attribute.name.energizer.player.stamina": "Stamina",
 

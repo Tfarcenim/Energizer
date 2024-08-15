@@ -1,7 +1,7 @@
 package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
-import com.gaura.energizer.utils.MethodeHelper;
+import com.gaura.energizer.utils.Utils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -63,7 +63,7 @@ public class InGameHudMixinHungerAndAir {
 
         float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
         int staminaLines = (int) Math.ceil(maxStamina / 20);
-        int yDecrement = MethodeHelper.getYDecrement(maxStamina);
+        int yDecrement = Utils.getYDecrement(maxStamina);
 
         return y - Energizer.CONFIG.y_offset_air_bar + (Energizer.CONFIG.sync_with_stamina_bar ? - (staminaLines - 1) * yDecrement - Energizer.CONFIG.y_offset_stamina_bar : 0);
     }
