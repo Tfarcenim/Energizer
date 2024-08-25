@@ -2,6 +2,8 @@ package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
 import com.gaura.energizer.utils.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -10,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+@Environment(EnvType.CLIENT)
 @Mixin(InGameHud.class)
 public class InGameHudMixinHungerAndAir {
 

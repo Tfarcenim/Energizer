@@ -5,14 +5,16 @@
   "mixins": [
     "BrewingRecipeRegistryInvoker",
     "CakeBlockMixin",
-    "ClientPlayerEntityMixin",
-    "EntityMixin",
     "HungerManagerMixin",
+    "LivingEntityInvoker",
+    "PlayerEntityMixin"
+  ],
+  "client": [
+    "ClientPlayerEntityMixin",
     "InGameHudInvoker",
     "InGameHudMixin",
     "InGameHudMixinHungerAndAir",
-    "LivingEntityInvoker",
-    "PlayerEntityMixin"
+    "EntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

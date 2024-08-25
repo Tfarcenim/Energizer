@@ -85,7 +85,7 @@ public class EnergizerConfig implements ConfigData {
 
     @ConfigEntry.Category("stamina")
     @Comment("If Stamina should be disabled in Peaceful.")
-    public boolean disable_stamina_in_peaceful = true;
+    public boolean disable_stamina_in_peaceful = false;
 
     @ConfigEntry.Category("stamina")
     @Comment("The x offset for the stamina bar.")
@@ -150,6 +150,10 @@ public class EnergizerConfig implements ConfigData {
     public int vigor_potion_long_time = 30;
 
     // HEAL
+
+    @ConfigEntry.Category("heal")
+    @Comment("The frequency for the healing animation.")
+    public float healing_animation_frequency = 5.0f;
 
     @ConfigEntry.Category("heal")
     public HealFood[] healing_food_list = {

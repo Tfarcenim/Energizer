@@ -2,15 +2,17 @@ package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
 import com.gaura.energizer.utils.IPlayerEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameMode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@Environment(EnvType.CLIENT)
 @Mixin(Entity.class)
 public class EntityMixin {
 

@@ -22,7 +22,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +44,10 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
             PlayerEntity player = (PlayerEntity) (Object) this;
 
-            cir.setReturnValue(!(player.getHealth() == player.getMaxHealth()) || ignoreHunger);
+            if (!player.isCreative()) {
+
+                cir.setReturnValue(!(player.getHealth() == player.getMaxHealth()) || ignoreHunger);
+            }
         }
     }
 
@@ -68,7 +70,10 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
                 serverPlayer.heal(Utils.getHealAmount(stack));
 
-                stack.decrement(1);
+                if (!serverPlayer.isCreative()) {
+
+                    stack.decrement(1);
+                }
 
                 serverPlayer.emitGameEvent(GameEvent.EAT);
             }

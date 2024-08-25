@@ -42,6 +42,7 @@
   "text.autoconfig.energizer.option.vigor_potion_long_time": "Vigor Potion Long Time",
 
   "text.autoconfig.energizer.category.heal": "Heal",
+  "text.autoconfig.energizer.option.healing_animation_frequency": "Healing Animation Frequency",
   "text.autoconfig.energizer.option.healing_food_list": "Healing Food List",
   "text.autoconfig.energizer.option.HealFood": "Entry",
   "text.autoconfig.energizer.option.HealFood.food": "Food",
