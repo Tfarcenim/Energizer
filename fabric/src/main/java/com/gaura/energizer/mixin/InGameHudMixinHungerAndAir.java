@@ -4,55 +4,55 @@ import com.gaura.energizer.Energizer;
 import com.gaura.energizer.utils.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Environment(EnvType.CLIENT)
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public class InGameHudMixinHungerAndAir {
 
     @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 3))
-    private void removeHungerBarFirst(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+    private void removeHungerBarFirst(GuiGraphics context, ResourceLocation texture, int x, int y, int u, int v, int width, int height) {
 
         if (!Energizer.CONFIG.remove_hunger) {
 
-            context.drawTexture(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
+            context.blit(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
         }
     }
 
     @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 4))
-    private void removeHungerBarSecond(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+    private void removeHungerBarSecond(GuiGraphics context, ResourceLocation texture, int x, int y, int u, int v, int width, int height) {
 
         if (!Energizer.CONFIG.remove_hunger) {
 
-            context.drawTexture(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
+            context.blit(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
         }
     }
 
     @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 5))
-    private void removeHungerBarThird(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+    private void removeHungerBarThird(GuiGraphics context, ResourceLocation texture, int x, int y, int u, int v, int width, int height) {
 
         if (!Energizer.CONFIG.remove_hunger) {
 
-            context.drawTexture(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
+            context.blit(texture, x + Energizer.CONFIG.x_offset_hunger_bar, y - Energizer.CONFIG.y_offset_hunger_bar, u, v, width, height);
         }
     }
 
     @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 6))
-    private void adjustAirBarFirst(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+    private void adjustAirBarFirst(GuiGraphics context, ResourceLocation texture, int x, int y, int u, int v, int width, int height) {
 
-        context.drawTexture(texture, getAirX(x), getAirY(y), u, v, width, height);
+        context.blit(texture, getAirX(x), getAirY(y), u, v, width, height);
     }
 
     @Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawTexture(Lnet/minecraft/util/Identifier;IIIIII)V", ordinal = 7))
-    private void adjustAirBarSecond(DrawContext context, Identifier texture, int x, int y, int u, int v, int width, int height) {
+    private void adjustAirBarSecond(GuiGraphics context, ResourceLocation texture, int x, int y, int u, int v, int width, int height) {
 
-        context.drawTexture(texture, getAirX(x), getAirY(y), u, v, width, height);
+        context.blit(texture, getAirX(x), getAirY(y), u, v, width, height);
     }
 
     private int getAirX(int x) {
@@ -62,7 +62,7 @@ public class InGameHudMixinHungerAndAir {
 
     private int getAirY(int y) {
 
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
 
         float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
         int staminaLines = (int) Math.ceil(maxStamina / 20);

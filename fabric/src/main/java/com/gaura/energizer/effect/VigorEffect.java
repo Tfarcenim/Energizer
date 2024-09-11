@@ -1,11 +1,11 @@
 package com.gaura.energizer.effect;
 
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 
-public class VigorEffect extends StatusEffect {
+public class VigorEffect extends MobEffect {
 
-    public VigorEffect(StatusEffectCategory category, int color) {
+    public VigorEffect(MobEffectCategory category, int color) {
 
         super(category, color);
     }

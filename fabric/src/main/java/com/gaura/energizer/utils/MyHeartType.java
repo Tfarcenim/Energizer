@@ -2,8 +2,8 @@ package com.gaura.energizer.utils;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 
 @Environment(value= EnvType.CLIENT)
 public enum MyHeartType {
@@ -42,8 +42,8 @@ public enum MyHeartType {
         return 16 + (this.textureIndex * 2 + i) * 9;
     }
 
-    public static MyHeartType fromPlayerState(PlayerEntity player) {
+    public static MyHeartType fromPlayerState(Player player) {
 
-        return player.hasStatusEffect(StatusEffects.POISON) ? POISONED : (player.hasStatusEffect(StatusEffects.WITHER) ? WITHERED : (player.isFrozen() ? FROZEN : NORMAL));
+        return player.hasEffect(MobEffects.POISON) ? POISONED : (player.hasEffect(MobEffects.WITHER) ? WITHERED : (player.isFullyFrozen() ? FROZEN : NORMAL));
     }
 }

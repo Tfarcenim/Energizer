@@ -1,8 +1,8 @@
 package com.gaura.energizer.utils;
 
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public interface IPlayerEntity {
 
-    NbtCompound getStopSprint();
+    CompoundTag getStopSprint();
 }

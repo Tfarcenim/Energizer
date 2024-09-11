@@ -2,9 +2,9 @@ package com.gaura.energizer.utils;
 
 import com.gaura.energizer.Energizer;
 import com.gaura.energizer.config.HealFood;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 public class Utils {
 
@@ -37,7 +37,7 @@ public class Utils {
 
         for (HealFood food : Energizer.CONFIG.healing_food_list) {
 
-            if (stack.getItem() == Registries.ITEM.get(new Identifier(food.food))) {
+            if (stack.getItem() == BuiltInRegistries.ITEM.get(new ResourceLocation(food.food))) {
 
                 return food.heal_amount;
             }

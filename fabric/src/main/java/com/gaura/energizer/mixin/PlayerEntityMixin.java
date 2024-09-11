@@ -7,23 +7,23 @@ import com.gaura.energizer.utils.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,17 +32,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public class PlayerEntityMixin implements IPlayerEntity {
 
-    @Shadow @Nullable public FishingBobberEntity fishHook;
+    @Shadow @Nullable public FishingHook fishHook;
 
     @Inject(method = "canConsume", at = @At("RETURN"), cancellable = true)
     public void canConsume(boolean ignoreHunger, CallbackInfoReturnable<Boolean> cir) {
 
         if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
 
-            PlayerEntity player = (PlayerEntity) (Object) this;
+            Player player = (Player) (Object) this;
 
             if (!player.isCreative()) {
 
@@ -52,30 +52,30 @@ public class PlayerEntityMixin implements IPlayerEntity {
     }
 
     @Inject(method = "eatFood", at = @At("HEAD"), cancellable = true)
-    public void eatFood(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
+    public void eatFood(Level world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
 
         if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
 
-            PlayerEntity player = (PlayerEntity) (Object) this;
+            Player player = (Player) (Object) this;
 
-            if (stack.isFood() && player instanceof ServerPlayerEntity serverPlayer && !world.isClient()) {
+            if (stack.isEdible() && player instanceof ServerPlayer serverPlayer && !world.isClientSide()) {
 
-                serverPlayer.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
+                serverPlayer.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 
-                world.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
+                world.playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
 
                 ((LivingEntityInvoker) serverPlayer).invokeApplyFoodEffects(stack, world, serverPlayer);
 
-                Criteria.CONSUME_ITEM.trigger(serverPlayer, stack);
+                CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, stack);
 
                 serverPlayer.heal(Utils.getHealAmount(stack));
 
                 if (!serverPlayer.isCreative()) {
 
-                    stack.decrement(1);
+                    stack.shrink(1);
                 }
 
-                serverPlayer.emitGameEvent(GameEvent.EAT);
+                serverPlayer.gameEvent(GameEvent.EAT);
             }
 
             cir.setReturnValue(stack);
@@ -83,7 +83,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
     }
 
     @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
-    private static void addStaminaAttribute(CallbackInfoReturnable<DefaultAttributeContainer.Builder> cir) {
+    private static void addStaminaAttribute(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
 
         cir.getReturnValue().add(Energizer.STAMINA_ATTRIBUTE);
     }
@@ -91,9 +91,9 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     protected void addStaminaDataTracker(CallbackInfo ci) {
 
-        PlayerEntity player = (PlayerEntity) (Object) this;
+        Player player = (Player) (Object) this;
 
-        player.getDataTracker().startTracking(Energizer.STAMINA_DATA, 1.0F);
+        player.getEntityData().define(Energizer.STAMINA_DATA, 1.0F);
     }
 
     public boolean stopSprint;
@@ -103,23 +103,23 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Inject(method = "tickMovement", at = @At("HEAD"))
     private void updateStamina(CallbackInfo ci) {
 
-        PlayerEntity player = (PlayerEntity) (Object) this;
-        long currentTime = player.getWorld().getTime();
+        Player player = (Player) (Object) this;
+        long currentTime = player.level().getGameTime();
 
-        if (!player.isCreative() && !player.isSpectator() && !player.getWorld().isClient && !(player.getWorld().getDifficulty() == Difficulty.PEACEFUL && Energizer.CONFIG.disable_stamina_in_peaceful)) {
+        if (!player.isCreative() && !player.isSpectator() && !player.level().isClientSide && !(player.level().getDifficulty() == Difficulty.PEACEFUL && Energizer.CONFIG.disable_stamina_in_peaceful)) {
 
-            boolean hasHunger = player.hasStatusEffect(StatusEffects.HUNGER);
+            boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
             float staminaDecrease = 0.0F;
             float staminaIncrease = (hasHunger && stopSprint) ? Energizer.CONFIG.stamina_increase_hunger_empty : hasHunger ? Energizer.CONFIG.stamina_increase_hunger : stopSprint ? Energizer.CONFIG.stamina_increase_empty : Energizer.CONFIG.stamina_increase;
 
-            if (player.hasStatusEffect(Energizer.VIGOR)) {
+            if (player.hasEffect(Energizer.VIGOR)) {
 
                 this.setStamina(this.getMaxStamina());
                 this.stopSprint = false;
             }
             else {
 
-                if (player.hasVehicle()) {
+                if (player.isPassenger()) {
 
                     if ((this.getStamina() < this.getMaxStamina()) && ((currentTime - lastStaminaLossTime) >= Energizer.CONFIG.stamina_regeneration_delay)) {
 
@@ -128,7 +128,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
                 }
                 else {
 
-                    if (player.isSprinting() && !player.isSubmergedInWater() && !stopSprint) {
+                    if (player.isSprinting() && !player.isUnderWater() && !stopSprint) {
 
                         staminaDecrease = hasHunger ? Energizer.CONFIG.sprinting_stamina_decrease_hunger : Energizer.CONFIG.sprinting_stamina_decrease;
                         this.setStamina(this.getStamina() - staminaDecrease);
@@ -139,7 +139,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
                             this.stopSprint = true;
                         }
                     }
-                    else if (player.isSwimming() && player.isSubmergedInWater() && Energizer.CONFIG.swimming_cost_stamina && !stopSprint) {
+                    else if (player.isSwimming() && player.isUnderWater() && Energizer.CONFIG.swimming_cost_stamina && !stopSprint) {
 
                         staminaDecrease = hasHunger ? Energizer.CONFIG.swimming_stamina_decrease_hunger : Energizer.CONFIG.swimming_stamina_decrease;
                         this.setStamina(this.getStamina() - staminaDecrease);
@@ -161,57 +161,57 @@ public class PlayerEntityMixin implements IPlayerEntity {
                 }
             }
 
-            PacketByteBuf buf = PacketByteBufs.create();
+            FriendlyByteBuf buf = PacketByteBufs.create();
             buf.writeBoolean(this.stopSprint);
-            ServerPlayNetworking.send((ServerPlayerEntity) player, EnergizerClient.STOP_SPRINT_ID, buf);
+            ServerPlayNetworking.send((ServerPlayer) player, EnergizerClient.STOP_SPRINT_ID, buf);
         }
     }
 
     private float getStamina() {
 
-        PlayerEntity player = (PlayerEntity) (Object) this;
+        Player player = (Player) (Object) this;
 
-        return player.getDataTracker().get(Energizer.STAMINA_DATA);
+        return player.getEntityData().get(Energizer.STAMINA_DATA);
     }
 
     private void setStamina(float stamina) {
 
-        PlayerEntity player = (PlayerEntity) (Object) this;
+        Player player = (Player) (Object) this;
 
-        player.getDataTracker().set(Energizer.STAMINA_DATA, MathHelper.clamp(stamina, 0.0F, this.getMaxStamina()));
+        player.getEntityData().set(Energizer.STAMINA_DATA, Mth.clamp(stamina, 0.0F, this.getMaxStamina()));
     }
 
     private float getMaxStamina() {
 
-        PlayerEntity player = (PlayerEntity) (Object) this;
+        Player player = (Player) (Object) this;
 
         return (float) player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
     }
 
-    private NbtCompound persistentData;
+    private CompoundTag persistentData;
 
     @Override
-    public NbtCompound getStopSprint() {
+    public CompoundTag getStopSprint() {
 
         if (this.persistentData == null) {
 
-            this.persistentData = new NbtCompound();
+            this.persistentData = new CompoundTag();
         }
 
         return persistentData;
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
-    private void writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
+    private void writeCustomDataToNbt(CompoundTag nbt, CallbackInfo ci) {
 
         nbt.putBoolean("StopSprint", this.stopSprint);
         nbt.putFloat("Stamina", this.getStamina());
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
-    private void readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+    private void readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
 
-        if (nbt.contains("Stamina", NbtElement.NUMBER_TYPE)) {
+        if (nbt.contains("Stamina", Tag.TAG_ANY_NUMERIC)) {
 
             this.setStamina(nbt.getFloat("Stamina"));
         }
