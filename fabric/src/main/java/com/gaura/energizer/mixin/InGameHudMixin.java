@@ -2,7 +2,7 @@ package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
 import com.gaura.energizer.EnergizerFabric;
-import com.gaura.energizer.utils.IPlayerEntity;
+import com.gaura.energizer.IPlayerEntity;
 import com.gaura.energizer.utils.Utils;
 import com.gaura.energizer.utils.MyHeartType;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -45,11 +45,12 @@ public class InGameHudMixin {
             int vigorIndex = -1;
 
             float maxStamina = (float) client.player.getAttributeValue(EnergizerFabric.STAMINA_ATTRIBUTE);
-            float currentStamina = client.player.getEntityData().get(EnergizerFabric.STAMINA_DATA);
+            IPlayerEntity iPlayerEntity = (IPlayerEntity) client.player;
+            float currentStamina = iPlayerEntity.getStamina();
 
             boolean hasHunger = client.player.hasEffect(MobEffects.HUNGER);
             boolean hasVigor = client.player.hasEffect(EnergizerFabric.VIGOR);
-            boolean stopSprint = ((IPlayerEntity) client.player).getStopSprint().getBoolean("stopSprint");
+            boolean stopSprint = iPlayerEntity.getStopSprint();
 
             int lines = (int) Math.ceil(maxStamina / 20);
             int fullIconsPerLine = (int) (currentStamina / 2);

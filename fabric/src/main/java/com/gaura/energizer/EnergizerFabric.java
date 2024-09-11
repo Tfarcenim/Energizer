@@ -30,9 +30,6 @@ public class EnergizerFabric implements ModInitializer {
 	// Stamina attribute
 	public static final Attribute STAMINA_ATTRIBUTE = new RangedAttribute("attribute.name." + Energizer.MOD_ID + ".player.stamina", 20, 1, 1024).setSyncable(true);
 
-	// Stamina data
-	public static final EntityDataAccessor<Float> STAMINA_DATA = SynchedEntityData.defineId(Player.class, EntityDataSerializers.FLOAT);
-
 	// Vigor effect
 	public static final VigorEffect VIGOR = new VigorEffect(MobEffectCategory.BENEFICIAL, 0x14B2FF);
 
@@ -66,5 +63,6 @@ public class EnergizerFabric implements ModInitializer {
 			Registry.register(BuiltInRegistries.POTION, new ResourceLocation(Energizer.MOD_ID, "vigor_potion_long"), VIGOR_POTION_LONG);
 			PotionBrewing.addMix(VIGOR_POTION, Items.REDSTONE, VIGOR_POTION_LONG);
 		}
+		Energizer.init();
 	}
 }

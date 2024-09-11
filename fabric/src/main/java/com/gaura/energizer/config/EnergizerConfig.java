@@ -1,5 +1,6 @@
 package com.gaura.energizer.config;
 
+import com.gaura.energizer.platform.MLConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
@@ -7,7 +8,7 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 @Config(name = "energizer")
 @Config.Gui.Background("minecraft:textures/block/yellow_wool.png")
-public class EnergizerConfig implements ConfigData {
+public class EnergizerConfig implements ConfigData, MLConfig {
 
     // STAMINA
 

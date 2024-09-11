@@ -2,7 +2,10 @@ package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.EnergizerClient;
-import com.gaura.energizer.utils.IPlayerEntity;
+import com.gaura.energizer.IPlayerEntity;
+import com.gaura.energizer.network.S2CSetStaminaPacket;
+import com.gaura.energizer.network.S2CStopSprintPacket;
+import com.gaura.energizer.platform.Services;
 import com.gaura.energizer.utils.Utils;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -15,7 +18,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -24,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,6 +34,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
 public class PlayerEntityMixin implements IPlayerEntity {
+
+    @Unique
+    float stamina;
 
     @Inject(method = "canEat", at = @At("RETURN"), cancellable = true)
     public void canConsume(boolean ignoreHunger, CallbackInfoReturnable<Boolean> cir) {
@@ -83,14 +89,6 @@ public class PlayerEntityMixin implements IPlayerEntity {
         cir.getReturnValue().add(EnergizerFabric.STAMINA_ATTRIBUTE);
     }
 
-    @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    protected void addStaminaDataTracker(CallbackInfo ci) {
-
-        Player player = (Player) (Object) this;
-
-        player.getEntityData().define(EnergizerFabric.STAMINA_DATA, 1.0F);
-    }
-
     public boolean stopSprint;
 
     private long lastStaminaLossTime = 0;
@@ -104,15 +102,13 @@ public class PlayerEntityMixin implements IPlayerEntity {
         if (!player.isCreative() && !player.isSpectator() && !player.level().isClientSide && !(player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
 
             boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
-            float staminaDecrease = 0.0F;
             float staminaIncrease = (hasHunger && stopSprint) ? EnergizerFabric.CONFIG.stamina_increase_hunger_empty : hasHunger ? EnergizerFabric.CONFIG.stamina_increase_hunger : stopSprint ? EnergizerFabric.CONFIG.stamina_increase_empty : EnergizerFabric.CONFIG.stamina_increase;
 
             if (player.hasEffect(EnergizerFabric.VIGOR)) {
 
                 this.setStamina(this.getMaxStamina());
                 this.stopSprint = false;
-            }
-            else {
+            } else {
 
                 if (player.isPassenger()) {
 
@@ -120,9 +116,9 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
                         this.setStamina(this.getStamina() + staminaIncrease);
                     }
-                }
-                else {
+                } else {
 
+                    float staminaDecrease;
                     if (player.isSprinting() && !player.isUnderWater() && !stopSprint) {
 
                         staminaDecrease = hasHunger ? EnergizerFabric.CONFIG.sprinting_stamina_decrease_hunger : EnergizerFabric.CONFIG.sprinting_stamina_decrease;
@@ -133,8 +129,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
                             this.stopSprint = true;
                         }
-                    }
-                    else if (player.isSwimming() && player.isUnderWater() && EnergizerFabric.CONFIG.swimming_cost_stamina && !stopSprint) {
+                    } else if (player.isSwimming() && player.isUnderWater() && EnergizerFabric.CONFIG.swimming_cost_stamina && !stopSprint) {
 
                         staminaDecrease = hasHunger ? EnergizerFabric.CONFIG.swimming_stamina_decrease_hunger : EnergizerFabric.CONFIG.swimming_stamina_decrease;
                         this.setStamina(this.getStamina() - staminaDecrease);
@@ -144,36 +139,29 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
                             this.stopSprint = true;
                         }
-                    }
-                    else if ((this.getStamina() < this.getMaxStamina()) && ((currentTime - lastStaminaLossTime) >= EnergizerFabric.CONFIG.stamina_regeneration_delay)) {
+                    } else if ((this.getStamina() < this.getMaxStamina()) && ((currentTime - lastStaminaLossTime) >= EnergizerFabric.CONFIG.stamina_regeneration_delay)) {
 
                         this.setStamina(this.getStamina() + staminaIncrease);
-                    }
-                    else if (this.getStamina() == this.getMaxStamina()) {
+                    } else if (this.getStamina() == this.getMaxStamina()) {
 
                         this.stopSprint = false;
                     }
                 }
             }
-
-            FriendlyByteBuf buf = PacketByteBufs.create();
-            buf.writeBoolean(this.stopSprint);
-            ServerPlayNetworking.send((ServerPlayer) player, EnergizerClient.STOP_SPRINT_ID, buf);
+            Services.PLATFORM.sendToClient(new S2CStopSprintPacket(stopSprint),(ServerPlayer) (Object) this);
+            Services.PLATFORM.sendToClient(new S2CSetStaminaPacket(stamina),(ServerPlayer) (Object) this);
         }
     }
 
-    private float getStamina() {
-
-        Player player = (Player) (Object) this;
-
-        return player.getEntityData().get(EnergizerFabric.STAMINA_DATA);
+    public float getStamina() {
+        return stamina;
     }
 
-    private void setStamina(float stamina) {
-
-        Player player = (Player) (Object) this;
-
-        player.getEntityData().set(EnergizerFabric.STAMINA_DATA, Mth.clamp(stamina, 0.0F, this.getMaxStamina()));
+    public void setStamina(float stamina) {
+        this.stamina = stamina;
+        if ((Object) this instanceof ServerPlayer) {
+            Services.PLATFORM.sendToClient(new S2CSetStaminaPacket(stamina),(ServerPlayer) (Object) this);
+        }
     }
 
     private float getMaxStamina() {
@@ -183,17 +171,14 @@ public class PlayerEntityMixin implements IPlayerEntity {
         return (float) player.getAttributeValue(EnergizerFabric.STAMINA_ATTRIBUTE);
     }
 
-    private CompoundTag persistentData;
+    @Override
+    public boolean getStopSprint(){
+        return stopSprint;
+    }
 
     @Override
-    public CompoundTag getStopSprint() {
-
-        if (this.persistentData == null) {
-
-            this.persistentData = new CompoundTag();
-        }
-
-        return persistentData;
+    public void setStopSprint(boolean stopSprint) {
+        this.stopSprint = stopSprint;
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
@@ -206,12 +191,10 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
     private void readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
 
-        if (nbt.contains("Stamina", Tag.TAG_ANY_NUMERIC)) {
-
+        if (nbt.contains("Stamina", Tag.TAG_FLOAT)) {
             this.setStamina(nbt.getFloat("Stamina"));
         }
         if (nbt.contains("StopSprint")) {
-
             this.stopSprint = nbt.getBoolean("StopSprint");
         }
     }

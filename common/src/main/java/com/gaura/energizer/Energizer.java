@@ -1,9 +1,7 @@
 package com.gaura.energizer;
 
-import com.gaura.energizer.platform.Services;
-import net.minecraft.core.registries.BuiltInRegistries;
+import com.gaura.energizer.network.PacketHandler;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +14,7 @@ public class Energizer {
     public static final String MOD_ID = "energizer";
     public static final String MOD_NAME = "Energizer";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
-    public static final ResourceLocation STAMINA_ICONS = new ResourceLocation(Energizer.MOD_ID, "textures/stamina/stamina_icons.png");
+    public static final ResourceLocation STAMINA_ICONS = id("textures/stamina/stamina_icons.png");
 
     // The loader specific projects are able to import and use any code from the common project. This allows you to
     // write the majority of your code here and load it from your loader specific projects. This example has some
@@ -27,5 +25,10 @@ public class Energizer {
         // your own abstraction layer. You can learn more about this in our provided services class. In this example
         // we have an interface in the common code and use a loader specific implementation to delegate our call to
         // the platform specific approach.
+        PacketHandler.registerPackets();
+    }
+
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(MOD_ID,path);
     }
 }

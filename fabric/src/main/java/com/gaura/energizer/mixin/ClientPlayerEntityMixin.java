@@ -1,7 +1,7 @@
 package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.EnergizerFabric;
-import com.gaura.energizer.utils.IPlayerEntity;
+import com.gaura.energizer.IPlayerEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -23,9 +23,11 @@ public class ClientPlayerEntityMixin {
 
         if (client.player != null) {
 
-            boolean stopSprint = ((IPlayerEntity) client.player).getStopSprint().getBoolean("stopSprint");
+            IPlayerEntity iPlayerEntity = (IPlayerEntity) client.player;
 
-            float currentStamina = client.player.getEntityData().get(EnergizerFabric.STAMINA_DATA);
+            boolean stopSprint = iPlayerEntity.getStopSprint();
+
+            float currentStamina = iPlayerEntity.getStamina();
 
             if (EnergizerFabric.CONFIG.can_continue_sprinting && (!stopSprint && (Minecraft.getInstance().options.keySprint.isDown() && EnergizerFabric.CONFIG.sprint_keybind))) {
 

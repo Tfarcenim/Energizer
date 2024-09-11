@@ -1,7 +1,7 @@
 package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.EnergizerFabric;
-import com.gaura.energizer.utils.IPlayerEntity;
+import com.gaura.energizer.IPlayerEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -23,7 +23,7 @@ public class EntityMixin {
 
         if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && EnergizerFabric.CONFIG.lower_jump && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
 
-            if (client.player != null && ((IPlayerEntity) client.player).getStopSprint().getBoolean("stopSprint")) {
+            if (client.player != null && ((IPlayerEntity) client.player).getStopSprint()) {
 
                 cir.setReturnValue(cir.getReturnValue() * EnergizerFabric.CONFIG.lower_jump_multiplier);
             }
@@ -37,7 +37,7 @@ public class EntityMixin {
 
         if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && EnergizerFabric.CONFIG.slower_walk && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
 
-            if (client.player != null && ((IPlayerEntity) client.player).getStopSprint().getBoolean("stopSprint")) {
+            if (client.player != null && ((IPlayerEntity) client.player).getStopSprint()) {
 
                 cir.setReturnValue(cir.getReturnValue() * EnergizerFabric.CONFIG.slower_walk_multiplier);
             }
