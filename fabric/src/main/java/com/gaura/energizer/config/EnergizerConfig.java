@@ -132,18 +132,8 @@ public class EnergizerConfig implements ConfigData, MLConfig {
 
     @ConfigEntry.Category("potion")
     @ConfigEntry.Gui.RequiresRestart
-    @Comment("If the vigor potion should be available.")
-    public boolean vigor_potion = true;
-
-    @ConfigEntry.Category("potion")
-    @ConfigEntry.Gui.RequiresRestart
     @Comment("The time the vigor potion should last (in seconds).")
     public int vigor_potion_time = 10;
-
-    @ConfigEntry.Category("potion")
-    @ConfigEntry.Gui.RequiresRestart
-    @Comment("If the long vigor potion should be available.")
-    public boolean vigor_potion_long = true;
 
     @ConfigEntry.Category("potion")
     @ConfigEntry.Gui.RequiresRestart
@@ -201,4 +191,24 @@ public class EnergizerConfig implements ConfigData, MLConfig {
             new HealFood("minecraft:glow_berries", 1),
             new HealFood("minecraft:tropical_fish", 1)
     };
+
+    @Override
+    public boolean removeHunger() {
+        return remove_hunger;
+    }
+
+    @Override
+    public boolean staminaBlink() {
+        return stamina_blink;
+    }
+
+    @Override
+    public boolean sprintKeybind() {
+        return sprint_keybind;
+    }
+
+    @Override
+    public boolean lowerJump() {
+        return lower_jump;
+    }
 }

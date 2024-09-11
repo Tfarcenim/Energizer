@@ -1,6 +1,8 @@
 package com.gaura.energizer;
 
 import com.gaura.energizer.network.PacketHandler;
+import com.gaura.energizer.platform.ModCompat;
+import com.gaura.energizer.platform.Services;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,4 +33,9 @@ public class Energizer {
     public static ResourceLocation id(String path) {
         return new ResourceLocation(MOD_ID,path);
     }
+
+    public static boolean removeHunger() {
+        return !ModCompat.heartymeals.loaded && Services.PLATFORM.getConfig().removeHunger();
+    }
+
 }

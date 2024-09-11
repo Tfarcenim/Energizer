@@ -37,9 +37,9 @@ public class Utils {
 
         for (HealFood food : EnergizerFabric.CONFIG.healing_food_list) {
 
-            if (stack.getItem() == BuiltInRegistries.ITEM.get(new ResourceLocation(food.food))) {
+            if (stack.getItem() == BuiltInRegistries.ITEM.get(new ResourceLocation(food.food()))) {
 
-                return food.heal_amount;
+                return food.heal_amount();
             }
         }
 

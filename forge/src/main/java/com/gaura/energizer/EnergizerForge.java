@@ -1,6 +1,8 @@
 package com.gaura.energizer;
 
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 
 @Mod(Energizer.MOD_ID)
 public class EnergizerForge {
@@ -12,7 +14,8 @@ public class EnergizerForge {
         // project.
     
         // Use Forge to bootstrap the Common mod.
-        Energizer.LOG.info("Hello Forge world!");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER,TomlConfig.SERVER_SPEC);
+
         Energizer.init();
         
     }

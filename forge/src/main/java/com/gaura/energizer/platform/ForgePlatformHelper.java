@@ -1,6 +1,7 @@
 package com.gaura.energizer.platform;
 
 import com.gaura.energizer.PacketHandlerForge;
+import com.gaura.energizer.TomlConfig;
 import com.gaura.energizer.network.C2SModPacket;
 import com.gaura.energizer.network.S2CModPacket;
 import com.gaura.energizer.platform.services.IPlatformHelper;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import java.util.function.Function;
 
 public class ForgePlatformHelper implements IPlatformHelper {
+    final MLConfig config = new TomlConfig();
 
     @Override
     public String getPlatformName() {
@@ -54,5 +56,8 @@ public class ForgePlatformHelper implements IPlatformHelper {
         PacketHandlerForge.sendToServer(msg);
     }
 
-
+    @Override
+    public MLConfig getConfig() {
+        return config;
+    }
 }

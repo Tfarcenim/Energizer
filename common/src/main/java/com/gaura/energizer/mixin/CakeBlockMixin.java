@@ -1,6 +1,6 @@
 package com.gaura.energizer.mixin;
 
-import com.gaura.energizer.EnergizerFabric;
+import com.gaura.energizer.platform.Services;
 import com.gaura.energizer.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -19,8 +19,7 @@ public class CakeBlockMixin {
 
     @Inject(method = "eat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodData;eat(IF)V", shift = At.Shift.AFTER))
     private static void tryEatRedirect(LevelAccessor world, BlockPos pos, BlockState state, Player player, CallbackInfoReturnable<InteractionResult> cir) {
-
-        if (EnergizerFabric.CONFIG.remove_hunger && (player.getHealth() < player.getMaxHealth())) {
+        if (Services.PLATFORM.getConfig().removeHunger() && player.getHealth() < player.getMaxHealth()) {
             player.heal(Utils.getHealAmount(Items.CAKE.getDefaultInstance()));
         }
     }

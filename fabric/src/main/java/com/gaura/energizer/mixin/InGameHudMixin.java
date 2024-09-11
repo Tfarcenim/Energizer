@@ -3,6 +3,7 @@ package com.gaura.energizer.mixin;
 import com.gaura.energizer.Energizer;
 import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.IPlayerEntity;
+import com.gaura.energizer.init.ModObjects;
 import com.gaura.energizer.utils.Utils;
 import com.gaura.energizer.utils.MyHeartType;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -44,12 +45,12 @@ public class InGameHudMixin {
 
             int vigorIndex = -1;
 
-            float maxStamina = (float) client.player.getAttributeValue(EnergizerFabric.STAMINA_ATTRIBUTE);
+            float maxStamina = (float) client.player.getAttributeValue(ModObjects.STAMINA_ATTRIBUTE);
             IPlayerEntity iPlayerEntity = (IPlayerEntity) client.player;
             float currentStamina = iPlayerEntity.getStamina();
 
             boolean hasHunger = client.player.hasEffect(MobEffects.HUNGER);
-            boolean hasVigor = client.player.hasEffect(EnergizerFabric.VIGOR);
+            boolean hasVigor = client.player.hasEffect(ModObjects.VIGOR);
             boolean stopSprint = iPlayerEntity.getStopSprint();
 
             int lines = (int) Math.ceil(maxStamina / 20);
@@ -124,7 +125,7 @@ public class InGameHudMixin {
     @Inject(method = "renderHearts", at = @At("HEAD"), cancellable = true)
     private void renderHealthBar(GuiGraphics context, Player player, int x, int y, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking, CallbackInfo ci) {
 
-        if (!FabricLoader.getInstance().isModLoaded(EnergizerFabric.HEARTY_MEALS_MOD_ID) && EnergizerFabric.CONFIG.remove_hunger) {
+        if (Energizer.removeHunger()) {
 
             MyHeartType heartType = MyHeartType.fromPlayerState(player);
             int i = 9 * (player.level().getLevelData().isHardcore() ? 5 : 0);

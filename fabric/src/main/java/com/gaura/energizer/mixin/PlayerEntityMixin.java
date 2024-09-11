@@ -1,19 +1,17 @@
 package com.gaura.energizer.mixin;
 
+import com.gaura.energizer.Energizer;
 import com.gaura.energizer.EnergizerFabric;
-import com.gaura.energizer.EnergizerClient;
 import com.gaura.energizer.IPlayerEntity;
+import com.gaura.energizer.init.ModObjects;
 import com.gaura.energizer.network.S2CSetStaminaPacket;
 import com.gaura.energizer.network.S2CStopSprintPacket;
 import com.gaura.energizer.platform.Services;
 import com.gaura.energizer.utils.Utils;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -41,7 +39,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Inject(method = "canEat", at = @At("RETURN"), cancellable = true)
     public void canConsume(boolean ignoreHunger, CallbackInfoReturnable<Boolean> cir) {
 
-        if (!FabricLoader.getInstance().isModLoaded(EnergizerFabric.HEARTY_MEALS_MOD_ID) && EnergizerFabric.CONFIG.remove_hunger) {
+        if (Energizer.removeHunger()) {
 
             Player player = (Player) (Object) this;
 
@@ -55,7 +53,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Inject(method = "eat", at = @At("HEAD"), cancellable = true)
     public void eatFood(Level world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
 
-        if (!FabricLoader.getInstance().isModLoaded(EnergizerFabric.HEARTY_MEALS_MOD_ID) && EnergizerFabric.CONFIG.remove_hunger) {
+        if (Energizer.removeHunger()) {
 
             Player player = (Player) (Object) this;
 
@@ -86,7 +84,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Inject(method = "createAttributes", at = @At("RETURN"))
     private static void addStaminaAttribute(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
 
-        cir.getReturnValue().add(EnergizerFabric.STAMINA_ATTRIBUTE);
+        cir.getReturnValue().add(ModObjects.STAMINA_ATTRIBUTE);
     }
 
     public boolean stopSprint;
@@ -104,7 +102,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
             boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
             float staminaIncrease = (hasHunger && stopSprint) ? EnergizerFabric.CONFIG.stamina_increase_hunger_empty : hasHunger ? EnergizerFabric.CONFIG.stamina_increase_hunger : stopSprint ? EnergizerFabric.CONFIG.stamina_increase_empty : EnergizerFabric.CONFIG.stamina_increase;
 
-            if (player.hasEffect(EnergizerFabric.VIGOR)) {
+            if (player.hasEffect(ModObjects.VIGOR)) {
 
                 this.setStamina(this.getMaxStamina());
                 this.stopSprint = false;
@@ -168,7 +166,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
         Player player = (Player) (Object) this;
 
-        return (float) player.getAttributeValue(EnergizerFabric.STAMINA_ATTRIBUTE);
+        return (float) player.getAttributeValue(ModObjects.STAMINA_ATTRIBUTE);
     }
 
     @Override

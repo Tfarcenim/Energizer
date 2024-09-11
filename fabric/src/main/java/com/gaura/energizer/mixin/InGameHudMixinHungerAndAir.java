@@ -1,9 +1,8 @@
 package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.EnergizerFabric;
+import com.gaura.energizer.init.ModObjects;
 import com.gaura.energizer.utils.Utils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -65,7 +64,7 @@ public class InGameHudMixinHungerAndAir {
 
         Minecraft client = Minecraft.getInstance();
 
-        float maxStamina = (float) client.player.getAttributeValue(EnergizerFabric.STAMINA_ATTRIBUTE);
+        float maxStamina = (float) client.player.getAttributeValue(ModObjects.STAMINA_ATTRIBUTE);
         int staminaLines = (int) Math.ceil(maxStamina / 20);
         int yDecrement = Utils.getYDecrement(maxStamina);
 
