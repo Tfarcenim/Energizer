@@ -1,6 +1,6 @@
 package com.gaura.energizer.mixin;
 
-import com.gaura.energizer.Energizer;
+import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.EnergizerClient;
 import com.gaura.energizer.utils.IPlayerEntity;
 import com.gaura.energizer.utils.Utils;
@@ -20,13 +20,10 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,12 +32,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Player.class)
 public class PlayerEntityMixin implements IPlayerEntity {
 
-    @Shadow @Nullable public FishingHook fishHook;
-
-    @Inject(method = "canConsume", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "canEat", at = @At("RETURN"), cancellable = true)
     public void canConsume(boolean ignoreHunger, CallbackInfoReturnable<Boolean> cir) {
 
-        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
+        if (!FabricLoader.getInstance().isModLoaded(EnergizerFabric.HEARTY_MEALS_MOD_ID) && EnergizerFabric.CONFIG.remove_hunger) {
 
             Player player = (Player) (Object) this;
 
@@ -51,10 +46,10 @@ public class PlayerEntityMixin implements IPlayerEntity {
         }
     }
 
-    @Inject(method = "eatFood", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "eat", at = @At("HEAD"), cancellable = true)
     public void eatFood(Level world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
 
-        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
+        if (!FabricLoader.getInstance().isModLoaded(EnergizerFabric.HEARTY_MEALS_MOD_ID) && EnergizerFabric.CONFIG.remove_hunger) {
 
             Player player = (Player) (Object) this;
 
@@ -82,37 +77,37 @@ public class PlayerEntityMixin implements IPlayerEntity {
         }
     }
 
-    @Inject(method = "createPlayerAttributes", at = @At("RETURN"))
+    @Inject(method = "createAttributes", at = @At("RETURN"))
     private static void addStaminaAttribute(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
 
-        cir.getReturnValue().add(Energizer.STAMINA_ATTRIBUTE);
+        cir.getReturnValue().add(EnergizerFabric.STAMINA_ATTRIBUTE);
     }
 
-    @Inject(method = "initDataTracker", at = @At("TAIL"))
+    @Inject(method = "defineSynchedData", at = @At("TAIL"))
     protected void addStaminaDataTracker(CallbackInfo ci) {
 
         Player player = (Player) (Object) this;
 
-        player.getEntityData().define(Energizer.STAMINA_DATA, 1.0F);
+        player.getEntityData().define(EnergizerFabric.STAMINA_DATA, 1.0F);
     }
 
     public boolean stopSprint;
 
     private long lastStaminaLossTime = 0;
 
-    @Inject(method = "tickMovement", at = @At("HEAD"))
+    @Inject(method = "aiStep", at = @At("HEAD"))
     private void updateStamina(CallbackInfo ci) {
 
         Player player = (Player) (Object) this;
         long currentTime = player.level().getGameTime();
 
-        if (!player.isCreative() && !player.isSpectator() && !player.level().isClientSide && !(player.level().getDifficulty() == Difficulty.PEACEFUL && Energizer.CONFIG.disable_stamina_in_peaceful)) {
+        if (!player.isCreative() && !player.isSpectator() && !player.level().isClientSide && !(player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
 
             boolean hasHunger = player.hasEffect(MobEffects.HUNGER);
             float staminaDecrease = 0.0F;
-            float staminaIncrease = (hasHunger && stopSprint) ? Energizer.CONFIG.stamina_increase_hunger_empty : hasHunger ? Energizer.CONFIG.stamina_increase_hunger : stopSprint ? Energizer.CONFIG.stamina_increase_empty : Energizer.CONFIG.stamina_increase;
+            float staminaIncrease = (hasHunger && stopSprint) ? EnergizerFabric.CONFIG.stamina_increase_hunger_empty : hasHunger ? EnergizerFabric.CONFIG.stamina_increase_hunger : stopSprint ? EnergizerFabric.CONFIG.stamina_increase_empty : EnergizerFabric.CONFIG.stamina_increase;
 
-            if (player.hasEffect(Energizer.VIGOR)) {
+            if (player.hasEffect(EnergizerFabric.VIGOR)) {
 
                 this.setStamina(this.getMaxStamina());
                 this.stopSprint = false;
@@ -121,7 +116,7 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
                 if (player.isPassenger()) {
 
-                    if ((this.getStamina() < this.getMaxStamina()) && ((currentTime - lastStaminaLossTime) >= Energizer.CONFIG.stamina_regeneration_delay)) {
+                    if ((this.getStamina() < this.getMaxStamina()) && ((currentTime - lastStaminaLossTime) >= EnergizerFabric.CONFIG.stamina_regeneration_delay)) {
 
                         this.setStamina(this.getStamina() + staminaIncrease);
                     }
@@ -130,27 +125,27 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
                     if (player.isSprinting() && !player.isUnderWater() && !stopSprint) {
 
-                        staminaDecrease = hasHunger ? Energizer.CONFIG.sprinting_stamina_decrease_hunger : Energizer.CONFIG.sprinting_stamina_decrease;
+                        staminaDecrease = hasHunger ? EnergizerFabric.CONFIG.sprinting_stamina_decrease_hunger : EnergizerFabric.CONFIG.sprinting_stamina_decrease;
                         this.setStamina(this.getStamina() - staminaDecrease);
                         lastStaminaLossTime = currentTime;
 
-                        if (this.getStamina() <= 0.0F && Energizer.CONFIG.disable_sprint_swim_empty_stamina) {
+                        if (this.getStamina() <= 0.0F && EnergizerFabric.CONFIG.disable_sprint_swim_empty_stamina) {
 
                             this.stopSprint = true;
                         }
                     }
-                    else if (player.isSwimming() && player.isUnderWater() && Energizer.CONFIG.swimming_cost_stamina && !stopSprint) {
+                    else if (player.isSwimming() && player.isUnderWater() && EnergizerFabric.CONFIG.swimming_cost_stamina && !stopSprint) {
 
-                        staminaDecrease = hasHunger ? Energizer.CONFIG.swimming_stamina_decrease_hunger : Energizer.CONFIG.swimming_stamina_decrease;
+                        staminaDecrease = hasHunger ? EnergizerFabric.CONFIG.swimming_stamina_decrease_hunger : EnergizerFabric.CONFIG.swimming_stamina_decrease;
                         this.setStamina(this.getStamina() - staminaDecrease);
                         lastStaminaLossTime = currentTime;
 
-                        if (this.getStamina() <= 0.0F && Energizer.CONFIG.disable_sprint_swim_empty_stamina) {
+                        if (this.getStamina() <= 0.0F && EnergizerFabric.CONFIG.disable_sprint_swim_empty_stamina) {
 
                             this.stopSprint = true;
                         }
                     }
-                    else if ((this.getStamina() < this.getMaxStamina()) && ((currentTime - lastStaminaLossTime) >= Energizer.CONFIG.stamina_regeneration_delay)) {
+                    else if ((this.getStamina() < this.getMaxStamina()) && ((currentTime - lastStaminaLossTime) >= EnergizerFabric.CONFIG.stamina_regeneration_delay)) {
 
                         this.setStamina(this.getStamina() + staminaIncrease);
                     }
@@ -171,21 +166,21 @@ public class PlayerEntityMixin implements IPlayerEntity {
 
         Player player = (Player) (Object) this;
 
-        return player.getEntityData().get(Energizer.STAMINA_DATA);
+        return player.getEntityData().get(EnergizerFabric.STAMINA_DATA);
     }
 
     private void setStamina(float stamina) {
 
         Player player = (Player) (Object) this;
 
-        player.getEntityData().set(Energizer.STAMINA_DATA, Mth.clamp(stamina, 0.0F, this.getMaxStamina()));
+        player.getEntityData().set(EnergizerFabric.STAMINA_DATA, Mth.clamp(stamina, 0.0F, this.getMaxStamina()));
     }
 
     private float getMaxStamina() {
 
         Player player = (Player) (Object) this;
 
-        return (float) player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
+        return (float) player.getAttributeValue(EnergizerFabric.STAMINA_ATTRIBUTE);
     }
 
     private CompoundTag persistentData;
@@ -201,14 +196,14 @@ public class PlayerEntityMixin implements IPlayerEntity {
         return persistentData;
     }
 
-    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void writeCustomDataToNbt(CompoundTag nbt, CallbackInfo ci) {
 
         nbt.putBoolean("StopSprint", this.stopSprint);
         nbt.putFloat("Stamina", this.getStamina());
     }
 
-    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
     private void readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
 
         if (nbt.contains("Stamina", Tag.TAG_ANY_NUMERIC)) {

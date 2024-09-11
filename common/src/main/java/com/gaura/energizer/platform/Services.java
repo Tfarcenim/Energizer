@@ -1,6 +1,6 @@
 package com.gaura.energizer.platform;
 
-import com.gaura.energizer.CommonClass;
+import com.gaura.energizer.Energizer;
 import com.gaura.energizer.platform.services.IPlatformHelper;
 
 import java.util.ServiceLoader;
@@ -24,7 +24,7 @@ public class Services {
         final T loadedService = ServiceLoader.load(clazz)
                 .findFirst()
                 .orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-        CommonClass.LOG.debug("Loaded {} for service {}", loadedService, clazz);
+        Energizer.LOG.debug("Loaded {} for service {}", loadedService, clazz);
         return loadedService;
     }
 }

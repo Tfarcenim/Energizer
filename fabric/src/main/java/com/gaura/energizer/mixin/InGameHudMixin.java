@@ -1,6 +1,7 @@
 package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.Energizer;
+import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.utils.IPlayerEntity;
 import com.gaura.energizer.utils.Utils;
 import com.gaura.energizer.utils.MyHeartType;
@@ -26,30 +27,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public class InGameHudMixin {
 
-    private static final ResourceLocation STAMINA_ICONS = new ResourceLocation(Energizer.MOD_ID, "textures/stamina/stamina_icons.png");
-
     private static final int X_OFFSET = 82;
     private static final int Y_OFFSET = 39;
 
     private int lastFullFillTime = -1;
 
-    @Inject(method = "renderStatusBars", at = @At("TAIL"))
+    @Inject(method = "renderPlayerHealth", at = @At("TAIL"))
     private void renderStaminaBar(GuiGraphics context, CallbackInfo ci) {
 
         Minecraft client = Minecraft.getInstance();
 
-        if (client.player != null && ((InGameHudInvoker) this).invokeGetHeartCount(((InGameHudInvoker) this).invokeGetRiddenEntity()) == 0 && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && Energizer.CONFIG.disable_stamina_in_peaceful)) {
+        if (client.player != null && ((InGameHudInvoker) this).invokeGetHeartCount(((InGameHudInvoker) this).invokeGetRiddenEntity()) == 0 && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
 
-            int x = (client.getWindow().getGuiScaledWidth() / 2) + X_OFFSET + Energizer.CONFIG.x_offset_stamina_bar;
-            int y = client.getWindow().getGuiScaledHeight() - Y_OFFSET - Energizer.CONFIG.y_offset_stamina_bar;
+            int x = (client.getWindow().getGuiScaledWidth() / 2) + X_OFFSET + EnergizerFabric.CONFIG.x_offset_stamina_bar;
+            int y = client.getWindow().getGuiScaledHeight() - Y_OFFSET - EnergizerFabric.CONFIG.y_offset_stamina_bar;
 
             int vigorIndex = -1;
 
-            float maxStamina = (float) client.player.getAttributeValue(Energizer.STAMINA_ATTRIBUTE);
-            float currentStamina = client.player.getEntityData().get(Energizer.STAMINA_DATA);
+            float maxStamina = (float) client.player.getAttributeValue(EnergizerFabric.STAMINA_ATTRIBUTE);
+            float currentStamina = client.player.getEntityData().get(EnergizerFabric.STAMINA_DATA);
 
             boolean hasHunger = client.player.hasEffect(MobEffects.HUNGER);
-            boolean hasVigor = client.player.hasEffect(Energizer.VIGOR);
+            boolean hasVigor = client.player.hasEffect(EnergizerFabric.VIGOR);
             boolean stopSprint = ((IPlayerEntity) client.player).getStopSprint().getBoolean("stopSprint");
 
             int lines = (int) Math.ceil(maxStamina / 20);
@@ -57,7 +56,7 @@ public class InGameHudMixin {
             boolean halfIcon = Math.floor(currentStamina) % 2 != 0;
             int backgroundsPerLine = (int) Math.ceil(maxStamina / 2);
 
-            if (hasVigor && Energizer.CONFIG.vigor_wave) {
+            if (hasVigor && EnergizerFabric.CONFIG.vigor_wave) {
 
                 vigorIndex = client.gui.getGuiTicks() % Mth.ceil(maxStamina + 5.0F);
             }
@@ -80,11 +79,11 @@ public class InGameHudMixin {
 
                 for (int i = 0; i < Math.min(backgroundsPerLine, 10); i++) {
 
-                    int u = ((lastFullFillTime != -1) && ((client.gui.getGuiTicks() - lastFullFillTime) < 3) && Energizer.CONFIG.stamina_blink) ? 9 : 0;
+                    int u = ((lastFullFillTime != -1) && ((client.gui.getGuiTicks() - lastFullFillTime) < 3) && EnergizerFabric.CONFIG.stamina_blink) ? 9 : 0;
 
                     int vigor = getVigorIndex(i, maxStamina, vigorIndex, line);
 
-                    context.blit(STAMINA_ICONS, x - i * 8, y - line * yDecrement - vigor, u, 0, 9, 9, 81, 9);
+                    context.blit(Energizer.STAMINA_ICONS, x - i * 8, y - line * yDecrement - vigor, u, 0, 9, 9, 81, 9);
                 }
 
                 for (int i = 0; i < Math.min(fullIconsPerLine, 10); i++) {
@@ -93,13 +92,13 @@ public class InGameHudMixin {
 
                     int vigor = getVigorIndex(i, maxStamina, vigorIndex, line);
 
-                    context.blit(STAMINA_ICONS, x - i * 8, y - line * yDecrement - vigor, u, 0, 9, 9, 81, 9);
+                    context.blit(Energizer.STAMINA_ICONS, x - i * 8, y - line * yDecrement - vigor, u, 0, 9, 9, 81, 9);
                 }
 
                 if (halfIcon && fullIconsPerLine < 10) {
 
                     int u = stopSprint ? 45 : hasHunger ? 63 : 27;
-                    context.blit(STAMINA_ICONS, x - fullIconsPerLine * 8, y - line * yDecrement, u, 0, 9, 9, 81, 9);
+                    context.blit(Energizer.STAMINA_ICONS, x - fullIconsPerLine * 8, y - line * yDecrement, u, 0, 9, 9, 81, 9);
                     halfIcon = false;
                 }
             }
@@ -121,10 +120,10 @@ public class InGameHudMixin {
     private static final ResourceLocation ICONS = new ResourceLocation("textures/gui/icons.png");
     private final RandomSource random = RandomSource.create();
 
-    @Inject(method = "renderHealthBar", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "renderHearts", at = @At("HEAD"), cancellable = true)
     private void renderHealthBar(GuiGraphics context, Player player, int x, int y, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking, CallbackInfo ci) {
 
-        if (!FabricLoader.getInstance().isModLoaded(Energizer.HEARTY_MEALS_MOD_ID) && Energizer.CONFIG.remove_hunger) {
+        if (!FabricLoader.getInstance().isModLoaded(EnergizerFabric.HEARTY_MEALS_MOD_ID) && EnergizerFabric.CONFIG.remove_hunger) {
 
             MyHeartType heartType = MyHeartType.fromPlayerState(player);
             int i = 9 * (player.level().getLevelData().isHardcore() ? 5 : 0);
@@ -165,7 +164,7 @@ public class InGameHudMixin {
                 if (healthAmount > 0 && player.getHealth() < player.getMaxHealth() && r < lastHealth + healthAmount && r >= lastHealth - healthAmount) {
                     Minecraft client = Minecraft.getInstance();
                     int ticks = client.gui.getGuiTicks();
-                    float opacity = (Mth.sin(ticks / Energizer.CONFIG.healing_animation_frequency) * 0.5f) + 0.5f;
+                    float opacity = (Mth.sin(ticks / EnergizerFabric.CONFIG.healing_animation_frequency) * 0.5f) + 0.5f;
                     bl3 = r + 1 == lastHealth + healthAmount;
                     RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
                     this.myDrawHeart(context, heartType, p, q, i, false, bl3);

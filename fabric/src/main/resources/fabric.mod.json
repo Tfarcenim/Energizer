@@ -16,8 +16,9 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.gaura.energizer.ExampleMod"
-        ]
+            "com.gaura.energizer.EnergizerFabric"
+        ],
+        "client": ["com.gaura.energizer.EnergizerClient"]
     },
     "mixins": [
         "${mod_id}.mixins.json",

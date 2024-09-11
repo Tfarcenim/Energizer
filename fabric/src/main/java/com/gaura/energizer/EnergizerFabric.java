@@ -2,7 +2,6 @@ package com.gaura.energizer;
 
 import com.gaura.energizer.config.EnergizerConfig;
 import com.gaura.energizer.effect.VigorEffect;
-import com.gaura.energizer.mixin.BrewingRecipeRegistryInvoker;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -19,19 +18,17 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.alchemy.Potions;
-import java.util.logging.Logger;
 
-public class Energizer implements ModInitializer {
+public class EnergizerFabric implements ModInitializer {
 
-	public static final String MOD_ID = "energizer";
 	public static final String HEARTY_MEALS_MOD_ID = "heartymeals";
-	public static final String NOSTALGIC_TWEAKS_MOD_ID = "nostalgic_tweaks";
 
 	public static EnergizerConfig CONFIG = new EnergizerConfig();
 
 	// Stamina attribute
-	public static final Attribute STAMINA_ATTRIBUTE = new RangedAttribute("attribute.name." + MOD_ID + ".player.stamina", 20, 1, 1024).setSyncable(true);
+	public static final Attribute STAMINA_ATTRIBUTE = new RangedAttribute("attribute.name." + Energizer.MOD_ID + ".player.stamina", 20, 1, 1024).setSyncable(true);
 
 	// Stamina data
 	public static final EntityDataAccessor<Float> STAMINA_DATA = SynchedEntityData.defineId(Player.class, EntityDataSerializers.FLOAT);
@@ -51,23 +48,23 @@ public class Energizer implements ModInitializer {
 		CONFIG = AutoConfig.getConfigHolder(EnergizerConfig.class).getConfig();
 
 		// Registering Stamina attribute
-		Registry.register(BuiltInRegistries.ATTRIBUTE, new ResourceLocation(MOD_ID, "generic.stamina"), STAMINA_ATTRIBUTE);
+		Registry.register(BuiltInRegistries.ATTRIBUTE, new ResourceLocation(Energizer.MOD_ID, "generic.stamina"), STAMINA_ATTRIBUTE);
 
 		// Registering Vigor effect
-		Registry.register(BuiltInRegistries.MOB_EFFECT, new ResourceLocation(MOD_ID, "vigor"), VIGOR);
+		Registry.register(BuiltInRegistries.MOB_EFFECT, new ResourceLocation(Energizer.MOD_ID, "vigor"), VIGOR);
 
 		if (CONFIG.vigor_potion) {
 
 			// Registering Vigor potion
-			Registry.register(BuiltInRegistries.POTION, new ResourceLocation(MOD_ID, "vigor_potion"), VIGOR_POTION);
-			BrewingRecipeRegistryInvoker.invokeRegisterPotionRecipe(Potions.AWKWARD, Items.BEETROOT, VIGOR_POTION);
+			Registry.register(BuiltInRegistries.POTION, new ResourceLocation(Energizer.MOD_ID, "vigor_potion"), VIGOR_POTION);
+			PotionBrewing.addMix(Potions.AWKWARD, Items.BEETROOT, VIGOR_POTION);
 		}
 
 		if (CONFIG.vigor_potion_long) {
 
 			// Registering Vigor long potion
-			Registry.register(BuiltInRegistries.POTION, new ResourceLocation(MOD_ID, "vigor_potion_long"), VIGOR_POTION_LONG);
-			BrewingRecipeRegistryInvoker.invokeRegisterPotionRecipe(VIGOR_POTION, Items.REDSTONE, VIGOR_POTION_LONG);
+			Registry.register(BuiltInRegistries.POTION, new ResourceLocation(Energizer.MOD_ID, "vigor_potion_long"), VIGOR_POTION_LONG);
+			PotionBrewing.addMix(VIGOR_POTION, Items.REDSTONE, VIGOR_POTION_LONG);
 		}
 	}
 }

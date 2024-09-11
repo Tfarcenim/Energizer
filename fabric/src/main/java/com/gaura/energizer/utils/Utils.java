@@ -1,6 +1,6 @@
 package com.gaura.energizer.utils;
 
-import com.gaura.energizer.Energizer;
+import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.config.HealFood;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +35,7 @@ public class Utils {
 
     public static int getHealAmount(ItemStack stack) {
 
-        for (HealFood food : Energizer.CONFIG.healing_food_list) {
+        for (HealFood food : EnergizerFabric.CONFIG.healing_food_list) {
 
             if (stack.getItem() == BuiltInRegistries.ITEM.get(new ResourceLocation(food.food))) {
 

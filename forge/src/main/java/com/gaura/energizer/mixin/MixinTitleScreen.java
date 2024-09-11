@@ -1,6 +1,6 @@
 package com.gaura.energizer.mixin;
 
-import com.gaura.energizer.CommonClass;
+import com.gaura.energizer.Energizer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +14,7 @@ public class MixinTitleScreen {
     @Inject(at = @At("HEAD"), method = "init()V")
     private void init(CallbackInfo info) {
 
-        CommonClass.LOG.info("This line is printed by an example mod mixin from Forge!");
-        CommonClass.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
+        Energizer.LOG.info("This line is printed by an example mod mixin from Forge!");
+        Energizer.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
     }
 }

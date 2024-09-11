@@ -1,6 +1,5 @@
 package com.gaura.energizer.mixin;
 
-import com.gaura.energizer.Energizer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -10,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 public class EnergizerMixinPlugin implements IMixinConfigPlugin {
+    public static final String NOSTALGIC_TWEAKS_MOD_ID = "nostalgic_tweaks";
+
     @Override
     public void onLoad(String mixinPackage) {}
 
@@ -22,7 +23,7 @@ public class EnergizerMixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
 
-        if (FabricLoader.getInstance().isModLoaded(Energizer.NOSTALGIC_TWEAKS_MOD_ID)) {
+        if (FabricLoader.getInstance().isModLoaded(NOSTALGIC_TWEAKS_MOD_ID)) {
 
             return !mixinClassName.equals("com.gaura.energizer.mixin.InGameHudMixinHungerAndAir");
         }

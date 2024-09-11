@@ -1,6 +1,6 @@
 package com.gaura.energizer.mixin;
 
-import com.gaura.energizer.Energizer;
+import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.utils.IPlayerEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,30 +16,30 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Entity.class)
 public class EntityMixin {
 
-    @Inject(method = "getJumpVelocityMultiplier", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getBlockJumpFactor", at = @At("RETURN"), cancellable = true)
     private void modifyJumpHeight(CallbackInfoReturnable<Float> cir) {
 
         Minecraft client = Minecraft.getInstance();
 
-        if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && Energizer.CONFIG.lower_jump && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && Energizer.CONFIG.disable_stamina_in_peaceful)) {
+        if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && EnergizerFabric.CONFIG.lower_jump && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
 
             if (client.player != null && ((IPlayerEntity) client.player).getStopSprint().getBoolean("stopSprint")) {
 
-                cir.setReturnValue(cir.getReturnValue() * Energizer.CONFIG.lower_jump_multiplier);
+                cir.setReturnValue(cir.getReturnValue() * EnergizerFabric.CONFIG.lower_jump_multiplier);
             }
         }
     }
 
-    @Inject(method = "getVelocityMultiplier", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getBlockSpeedFactor", at = @At("RETURN"), cancellable = true)
     private void modifyWalkSpeed(CallbackInfoReturnable<Float> cir) {
 
         Minecraft client = Minecraft.getInstance();
 
-        if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && Energizer.CONFIG.slower_walk && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && Energizer.CONFIG.disable_stamina_in_peaceful)) {
+        if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && EnergizerFabric.CONFIG.slower_walk && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
 
             if (client.player != null && ((IPlayerEntity) client.player).getStopSprint().getBoolean("stopSprint")) {
 
-                cir.setReturnValue(cir.getReturnValue() * Energizer.CONFIG.slower_walk_multiplier);
+                cir.setReturnValue(cir.getReturnValue() * EnergizerFabric.CONFIG.slower_walk_multiplier);
             }
         }
     }

@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Gui.class)
 public interface InGameHudInvoker {
 
-    @Invoker("getRiddenEntity")
+    @Invoker("getPlayerVehicleWithHealth")
     LivingEntity invokeGetRiddenEntity();
 
-    @Invoker("getHeartCount")
+    @Invoker("getVehicleMaxHearts")
     int invokeGetHeartCount(LivingEntity entity);
 }
