@@ -5,7 +5,6 @@ import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.IPlayerEntity;
 import com.gaura.energizer.init.ModObjects;
 import com.gaura.energizer.Utils;
-import com.gaura.energizer.utils.MyHeartType;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,15 +17,21 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(Gui.class)
-public class InGameHudMixin {
+public abstract class InGameHudMixin {
 
+    @Shadow protected abstract void renderHeart(GuiGraphics pGuiGraphics, Gui.HeartType pHeartType, int pX, int pY, int pYOffset, boolean pRenderHighlight, boolean pHalfHeart);
+
+    @Shadow @Final
+    private RandomSource random;
     private static final int X_OFFSET = 82;
     private static final int Y_OFFSET = 39;
 
@@ -118,15 +123,13 @@ public class InGameHudMixin {
         return index;
     }
 
-    private static final ResourceLocation ICONS = new ResourceLocation("textures/gui/icons.png");
-    private final RandomSource random = RandomSource.create();
 
     @Inject(method = "renderHearts", at = @At("HEAD"), cancellable = true)
     private void renderHealthBar(GuiGraphics context, Player player, int x, int y, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking, CallbackInfo ci) {
 
         if (Energizer.removeHunger()) {
 
-            MyHeartType heartType = MyHeartType.fromPlayerState(player);
+            Gui.HeartType heartType = Gui.HeartType.forPlayer(player);
             int i = 9 * (player.level().getLevelData().isHardcore() ? 5 : 0);
             int j = Mth.ceil((double) maxHealth / 2.0);
             int k = Mth.ceil((double) absorption / 2.0);
@@ -145,16 +148,16 @@ public class InGameHudMixin {
                 if (m < j && m == regeneratingHeartIndex) {
                     q -= 2;
                 }
-                this.myDrawHeart(context, MyHeartType.CONTAINER, p, q, i, blinking, false);
+                this.renderHeart(context, Gui.HeartType.CONTAINER, p, q, i, blinking, false);
                 int r = m * 2;
-                boolean bl2 = bl = m >= j;
+                bl = m >= j;
                 if (bl && (s = r - l) < absorption) {
                     boolean bl22 = s + 1 == absorption;
-                    this.myDrawHeart(context, heartType == MyHeartType.WITHERED ? heartType : MyHeartType.ABSORBING, p, q, i, false, bl22);
+                    this.renderHeart(context, heartType == Gui.HeartType.WITHERED ? heartType : Gui.HeartType.ABSORBING, p, q, i, false, bl22);
                 }
                 if (blinking && r < health) {
                     bl3 = r + 1 == health;
-                    this.myDrawHeart(context, heartType, p, q, i, true, bl3);
+                    this.renderHeart(context, heartType, p, q, i, true, bl3);
                 }
 
                 // My code
@@ -168,22 +171,17 @@ public class InGameHudMixin {
                     float opacity = (Mth.sin(ticks / EnergizerFabric.CONFIG.healing_animation_frequency) * 0.5f) + 0.5f;
                     bl3 = r + 1 == lastHealth + healthAmount;
                     RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
-                    this.myDrawHeart(context, heartType, p, q, i, false, bl3);
+                    this.renderHeart(context, heartType, p, q, i, false, bl3);
                     RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                 }
                 // End of my code
 
                 if (r >= lastHealth) continue;
                 bl3 = r + 1 == lastHealth;
-                this.myDrawHeart(context, heartType, p, q, i, false, bl3);
+                this.renderHeart(context, heartType, p, q, i, false, bl3);
             }
 
             ci.cancel();
         }
-    }
-
-    private void myDrawHeart(GuiGraphics context, MyHeartType type, int x, int y, int v, boolean blinking, boolean halfHeart) {
-
-        context.blit(ICONS, x, y, type.getU(halfHeart, blinking), v, 9, 9);
     }
 }
