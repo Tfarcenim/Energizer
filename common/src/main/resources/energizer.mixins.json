@@ -9,6 +9,7 @@
     "LivingEntityInvoker"
   ],
   "client": [
+    "InGameHudInvoker"
   ],
   "server": [
   ],

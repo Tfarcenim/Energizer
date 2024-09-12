@@ -10,6 +10,8 @@ import java.util.function.Function;
 
 public interface IPlatformHelper {
 
+    int X_OFFSET = 82;
+    int Y_OFFSET = 39;
     /**
      * Gets the name of the current platform
      *
@@ -47,5 +49,12 @@ public interface IPlatformHelper {
     void sendToClient(S2CModPacket msg, ServerPlayer player);
     void sendToServer(C2SModPacket msg);
     MLConfig getConfig();
+    default int getBaseXOffset() {
+        return X_OFFSET;
+    }
+    int getBaseYOffset();
+    default void offsetY() {
+
+    }
 
 }

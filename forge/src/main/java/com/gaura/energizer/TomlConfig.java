@@ -41,6 +41,10 @@ public class TomlConfig implements MLConfig {
         public static ForgeConfigSpec.DoubleValue swimmingStaminaDecreaseHunger;
         public static ForgeConfigSpec.BooleanValue swimmingCostStamina;
         public static ForgeConfigSpec.ConfigValue<List<? extends String>> healingFoodList;
+        public static ForgeConfigSpec.IntValue xOffsetStaminaBar;
+        public static ForgeConfigSpec.IntValue yOffsetStaminaBar;
+
+        public static ForgeConfigSpec.DoubleValue healingAnimationFrequency;
 
         public Server(ForgeConfigSpec.Builder builder) {
             builder.push("hunger");
@@ -87,9 +91,18 @@ public class TomlConfig implements MLConfig {
 
             swimmingCostStamina = builder.comment("If swimming should cost stamina.")
                             .define("swimming_cost_stamina",true);
+
+            //clientside
+            xOffsetStaminaBar = builder.comment("The x offset for the stamina bar.").defineInRange("x_offset_stamina_bar",0,-10000,10000);
+            yOffsetStaminaBar = builder.comment("The y offset for the stamina bar.").defineInRange("y_offset_stamina_bar",0,-10000,10000);
+
+
             builder.pop();
             builder.push("heal");
-            healingFoodList = builder.comment().defineList("healing_food_list",Defaults.convert(),o -> o instanceof String);
+            //clientside
+            healingAnimationFrequency = builder.comment("The frequency for the healing animation.")
+                    .defineInRange("healing_animation_frequency",5,0,Float.MAX_VALUE);
+            healingFoodList = builder.defineList("healing_food_list",Defaults.convert(),o -> o instanceof String);
             builder.pop();
         }
     }
@@ -189,5 +202,25 @@ public class TomlConfig implements MLConfig {
     @Override
     public HealFood[] healingFoodList() {
         return cache;
+    }
+
+    @Override
+    public double healingAnimationFrequency() {
+        return Server.healingAnimationFrequency.get();
+    }
+
+    @Override
+    public int xOffsetStaminaBar() {
+        return Server.xOffsetStaminaBar.get();
+    }
+
+    @Override
+    public int yOffsetStaminaBar() {
+        return Server.yOffsetStaminaBar.get();
+    }
+
+    @Override
+    public boolean vigorWave() {
+        return Server.vigorWave.get();
     }
 }

@@ -24,5 +24,9 @@ public interface MLConfig {
     double staminaIncreaseEmpty();
 
     HealFood[] healingFoodList();
+    double healingAnimationFrequency();
+    int xOffsetStaminaBar();
+    int yOffsetStaminaBar();
+    boolean vigorWave();
 
 }

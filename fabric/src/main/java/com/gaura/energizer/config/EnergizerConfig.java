@@ -1,11 +1,13 @@
 package com.gaura.energizer.config;
 
-import com.gaura.energizer.Defaults;
+import com.gaura.energizer.Energizer;
 import com.gaura.energizer.platform.MLConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
+
+import java.util.Arrays;
 
 @Config(name = "energizer")
 @Config.Gui.Background("minecraft:textures/block/yellow_wool.png")
@@ -148,7 +150,50 @@ public class EnergizerConfig implements ConfigData, MLConfig {
     public float healing_animation_frequency = 5.0f;
 
     @ConfigEntry.Category("heal")
-    public HealFood[] healing_food_list = Defaults.healfoods;
+    public HealFood[] healing_food_list = {
+
+            new HealFood("minecraft:apple", 2),
+            new HealFood("minecraft:baked_potato", 3),
+            new HealFood("minecraft:beef", 1),
+            new HealFood("minecraft:beetroot", 1),
+            new HealFood("minecraft:beetroot_soup", 5),
+            new HealFood("minecraft:bread", 3),
+            new HealFood("minecraft:cake", 1),
+            new HealFood("minecraft:carrot", 2),
+            new HealFood("minecraft:chicken", 1),
+            new HealFood("minecraft:chorus_fruit", 1),
+            new HealFood("minecraft:cod", 1),
+            new HealFood("minecraft:cooked_beef", 4),
+            new HealFood("minecraft:cooked_chicken", 3),
+            new HealFood("minecraft:cooked_cod", 3),
+            new HealFood("minecraft:cooked_mutton", 3),
+            new HealFood("minecraft:cooked_porkchop", 4),
+            new HealFood("minecraft:cooked_rabbit", 3),
+            new HealFood("minecraft:cooked_salmon", 3),
+            new HealFood("minecraft:cookie", 1),
+            new HealFood("minecraft:dried_kelp", 1),
+            new HealFood("minecraft:enchanted_golden_apple", 4),
+            new HealFood("minecraft:golden_apple", 3),
+            new HealFood("minecraft:golden_carrot", 4),
+            new HealFood("minecraft:honey_bottle", 2),
+            new HealFood("minecraft:melon_slice", 1),
+            new HealFood("minecraft:mushroom_stew", 5),
+            new HealFood("minecraft:mutton", 1),
+            new HealFood("minecraft:poisonous_potato", 1),
+            new HealFood("minecraft:porkchop", 1),
+            new HealFood("minecraft:potato", 1),
+            new HealFood("minecraft:pufferfish", 1),
+            new HealFood("minecraft:pumpkin_pie", 5),
+            new HealFood("minecraft:rabbit", 1),
+            new HealFood("minecraft:rabbit_stew", 5),
+            new HealFood("minecraft:rotten_flesh", 1),
+            new HealFood("minecraft:salmon", 1),
+            new HealFood("minecraft:spider_eye", 1),
+            new HealFood("minecraft:suspicious_stew", 5),
+            new HealFood("minecraft:sweet_berries", 1),
+            new HealFood("minecraft:glow_berries", 1),
+            new HealFood("minecraft:tropical_fish", 1)
+    };
 
     @Override
     public boolean removeHunger() {
@@ -233,5 +278,25 @@ public class EnergizerConfig implements ConfigData, MLConfig {
     @Override
     public HealFood[] healingFoodList() {
         return healing_food_list;
+    }
+
+    @Override
+    public double healingAnimationFrequency() {
+        return healing_animation_frequency;
+    }
+
+    @Override
+    public int xOffsetStaminaBar() {
+        return x_offset_stamina_bar;
+    }
+
+    @Override
+    public int yOffsetStaminaBar() {
+        return y_offset_stamina_bar;
+    }
+
+    @Override
+    public boolean vigorWave() {
+        return vigor_wave;
     }
 }

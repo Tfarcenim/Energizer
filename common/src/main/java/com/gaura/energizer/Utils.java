@@ -34,7 +34,7 @@ public class Utils {
     }
 
     public static int getHealAmount(ItemStack stack) {
-
+        if (stack.isEmpty()) return 0;
         for (HealFood food : Services.PLATFORM.getConfig().healingFoodList()) {
 
             if (stack.getItem() == BuiltInRegistries.ITEM.get(new ResourceLocation(food.food()))) {

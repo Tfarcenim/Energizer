@@ -15,6 +15,8 @@ import java.util.function.Function;
 
 public class FabricPlatformHelper implements IPlatformHelper {
 
+
+
     @Override
     public String getPlatformName() {
         return "Fabric";
@@ -64,5 +66,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public MLConfig getConfig() {
         return EnergizerFabric.CONFIG;
+    }
+
+    @Override
+    public int getBaseYOffset() {
+        return Y_OFFSET;
     }
 }

@@ -5,8 +5,10 @@ import com.gaura.energizer.TomlConfig;
 import com.gaura.energizer.network.C2SModPacket;
 import com.gaura.energizer.network.S2CModPacket;
 import com.gaura.energizer.platform.services.IPlatformHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 
@@ -59,5 +61,15 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public MLConfig getConfig() {
         return config;
+    }
+
+    @Override
+    public int getBaseYOffset() {
+        return ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
+    }
+
+    @Override
+    public void offsetY() {
+        ((ForgeGui)Minecraft.getInstance().gui).rightHeight +=10;
     }
 }
