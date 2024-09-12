@@ -1,7 +1,7 @@
 package com.gaura.energizer.mixin;
 
+import com.gaura.energizer.Utils;
 import com.gaura.energizer.platform.Services;
-import com.gaura.energizer.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;

@@ -1,5 +1,6 @@
 package com.gaura.energizer.config;
 
+import com.gaura.energizer.Defaults;
 import com.gaura.energizer.platform.MLConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
@@ -147,50 +148,7 @@ public class EnergizerConfig implements ConfigData, MLConfig {
     public float healing_animation_frequency = 5.0f;
 
     @ConfigEntry.Category("heal")
-    public HealFood[] healing_food_list = {
-
-            new HealFood("minecraft:apple", 2),
-            new HealFood("minecraft:baked_potato", 3),
-            new HealFood("minecraft:beef", 1),
-            new HealFood("minecraft:beetroot", 1),
-            new HealFood("minecraft:beetroot_soup", 5),
-            new HealFood("minecraft:bread", 3),
-            new HealFood("minecraft:cake", 1),
-            new HealFood("minecraft:carrot", 2),
-            new HealFood("minecraft:chicken", 1),
-            new HealFood("minecraft:chorus_fruit", 1),
-            new HealFood("minecraft:cod", 1),
-            new HealFood("minecraft:cooked_beef", 4),
-            new HealFood("minecraft:cooked_chicken", 3),
-            new HealFood("minecraft:cooked_cod", 3),
-            new HealFood("minecraft:cooked_mutton", 3),
-            new HealFood("minecraft:cooked_porkchop", 4),
-            new HealFood("minecraft:cooked_rabbit", 3),
-            new HealFood("minecraft:cooked_salmon", 3),
-            new HealFood("minecraft:cookie", 1),
-            new HealFood("minecraft:dried_kelp", 1),
-            new HealFood("minecraft:enchanted_golden_apple", 4),
-            new HealFood("minecraft:golden_apple", 3),
-            new HealFood("minecraft:golden_carrot", 4),
-            new HealFood("minecraft:honey_bottle", 2),
-            new HealFood("minecraft:melon_slice", 1),
-            new HealFood("minecraft:mushroom_stew", 5),
-            new HealFood("minecraft:mutton", 1),
-            new HealFood("minecraft:poisonous_potato", 1),
-            new HealFood("minecraft:porkchop", 1),
-            new HealFood("minecraft:potato", 1),
-            new HealFood("minecraft:pufferfish", 1),
-            new HealFood("minecraft:pumpkin_pie", 5),
-            new HealFood("minecraft:rabbit", 1),
-            new HealFood("minecraft:rabbit_stew", 5),
-            new HealFood("minecraft:rotten_flesh", 1),
-            new HealFood("minecraft:salmon", 1),
-            new HealFood("minecraft:spider_eye", 1),
-            new HealFood("minecraft:suspicious_stew", 5),
-            new HealFood("minecraft:sweet_berries", 1),
-            new HealFood("minecraft:glow_berries", 1),
-            new HealFood("minecraft:tropical_fish", 1)
-    };
+    public HealFood[] healing_food_list = Defaults.healfoods;
 
     @Override
     public boolean removeHunger() {
@@ -210,5 +168,70 @@ public class EnergizerConfig implements ConfigData, MLConfig {
     @Override
     public boolean lowerJump() {
         return lower_jump;
+    }
+
+    @Override
+    public boolean disableSprintSwimEmptyStamina() {
+        return disable_sprint_swim_empty_stamina;
+    }
+
+    @Override
+    public double staminaIncrease() {
+        return stamina_increase;
+    }
+
+    @Override
+    public double staminaIncreaseEmpty() {
+        return stamina_increase_empty;
+    }
+
+    @Override
+    public double staminaIncreaseHunger() {
+        return stamina_increase_hunger;
+    }
+
+    @Override
+    public double staminaIncreaseHungerEmpty() {
+        return stamina_increase_hunger_empty;
+    }
+
+    @Override
+    public boolean disableStaminaInPeaceful() {
+        return disable_stamina_in_peaceful;
+    }
+
+    @Override
+    public int staminaRegenerationDelay() {
+        return stamina_regeneration_delay;
+    }
+
+    @Override
+    public double sprintingStaminaDecrease() {
+        return sprinting_stamina_decrease;
+    }
+
+    @Override
+    public double sprintingStaminaDecreaseHunger() {
+        return sprinting_stamina_decrease_hunger;
+    }
+
+    @Override
+    public double swimmingStaminaDecrease() {
+        return swimming_stamina_decrease;
+    }
+
+    @Override
+    public double swimmingStaminaDecreaseHunger() {
+        return swimming_stamina_decrease_hunger;
+    }
+
+    @Override
+    public boolean swimmingCostStamina() {
+        return swimming_cost_stamina;
+    }
+
+    @Override
+    public HealFood[] healingFoodList() {
+        return healing_food_list;
     }
 }

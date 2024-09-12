@@ -2,7 +2,7 @@ package com.gaura.energizer.mixin;
 
 import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.init.ModObjects;
-import com.gaura.energizer.utils.Utils;
+import com.gaura.energizer.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
