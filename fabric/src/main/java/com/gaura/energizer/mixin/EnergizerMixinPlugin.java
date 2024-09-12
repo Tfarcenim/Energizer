@@ -25,7 +25,7 @@ public class EnergizerMixinPlugin implements IMixinConfigPlugin {
 
         if (FabricLoader.getInstance().isModLoaded(NOSTALGIC_TWEAKS_MOD_ID)) {
 
-            return !mixinClassName.equals("com.gaura.energizer.mixin.InGameHudMixinHungerAndAir");
+            return !mixinClassName.equals("com.gaura.energizer.mixin.GuiMixinFabric");
         }
 
         return true;

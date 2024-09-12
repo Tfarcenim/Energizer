@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
-public class PlayerEntityMixinFabric implements IPlayerEntity {
+public class PlayerEntityMixin implements IPlayerEntity {
 
     @Unique
     float stamina;

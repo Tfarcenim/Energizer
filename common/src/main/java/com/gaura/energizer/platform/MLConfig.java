@@ -28,5 +28,10 @@ public interface MLConfig {
     int xOffsetStaminaBar();
     int yOffsetStaminaBar();
     boolean vigorWave();
+    boolean canContinueSprinting();
+
+    double lowerJumpMultiplier();
+    double slowerWalkMultiplier();
+    boolean slowerWalk();
 
 }

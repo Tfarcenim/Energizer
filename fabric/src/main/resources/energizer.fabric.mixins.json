@@ -5,15 +5,11 @@
     "refmap": "${mod_id}.refmap.json",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "HungerManagerMixin",
-      "PlayerEntityMixinFabric"
     ],
     "client": [
-        "ClientPlayerEntityMixin",
         "InGameHudInvoker",
         "InGameHudMixin",
-        "InGameHudMixinHungerAndAir",
-        "EntityMixin"
+        "GuiMixinFabric"
     ],
     "injectors": {
       "defaultRequire": 1

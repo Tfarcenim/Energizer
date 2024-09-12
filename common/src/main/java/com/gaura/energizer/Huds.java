@@ -107,6 +107,7 @@ public class Huds {
                     halfIcon = false;
                 }
             }
+            Services.PLATFORM.offsetY();
         }
     }
 

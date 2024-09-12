@@ -22,6 +22,7 @@ public class TomlConfig implements MLConfig {
 
     public static class Server {
         public static ForgeConfigSpec.BooleanValue removeHunger;
+        public static ForgeConfigSpec.BooleanValue canContinueSprinting;
 
         public static ForgeConfigSpec.BooleanValue staminaBlink;
         public static ForgeConfigSpec.BooleanValue vigorWave;
@@ -44,11 +45,18 @@ public class TomlConfig implements MLConfig {
         public static ForgeConfigSpec.IntValue xOffsetStaminaBar;
         public static ForgeConfigSpec.IntValue yOffsetStaminaBar;
 
+        public static ForgeConfigSpec.DoubleValue lowerJumpMultiplier;
+
+        public static ForgeConfigSpec.BooleanValue slowerWalk;
+        public static ForgeConfigSpec.DoubleValue slowerWalkMultiplier;
+
         public static ForgeConfigSpec.DoubleValue healingAnimationFrequency;
 
         public Server(ForgeConfigSpec.Builder builder) {
             builder.push("hunger");
             removeHunger = builder.comment("If the hunger should be removed.").define("remove_hunger",true);
+            canContinueSprinting = builder.comment("If the player can sprint when the hunger bar is below 6 (3 icons).").define("can_continue_sprinting",false);
+
             builder.pop();
             builder.push("stamina");
             staminaBlink = builder.comment("If the stamina bar should blink when stamina is full.").define("stamina_blink",true);
@@ -91,6 +99,15 @@ public class TomlConfig implements MLConfig {
 
             swimmingCostStamina = builder.comment("If swimming should cost stamina.")
                             .define("swimming_cost_stamina",true);
+
+            lowerJumpMultiplier = builder.comment("The multiplier for the jump height when the stamina bar is empty.")
+                    .defineInRange("lower_jump_multiplier",.75,0,1);
+
+            slowerWalk = builder.comment("If the player will walk slower when the stamina bar is empty.")
+                    .define("slower_walk",true);
+
+            slowerWalkMultiplier = builder.comment("The multiplier for the walk speed when the stamina bar is empty.")
+                    .defineInRange("slower_walk_multiplier",.5,0,1);
 
             //clientside
             xOffsetStaminaBar = builder.comment("The x offset for the stamina bar.").defineInRange("x_offset_stamina_bar",0,-10000,10000);
@@ -222,5 +239,25 @@ public class TomlConfig implements MLConfig {
     @Override
     public boolean vigorWave() {
         return Server.vigorWave.get();
+    }
+
+    @Override
+    public boolean canContinueSprinting() {
+        return Server.canContinueSprinting.get();
+    }
+
+    @Override
+    public double lowerJumpMultiplier() {
+        return Server.lowerJumpMultiplier.get();
+    }
+
+    @Override
+    public double slowerWalkMultiplier() {
+        return Server.slowerWalkMultiplier.get();
+    }
+
+    @Override
+    public boolean slowerWalk() {
+        return Server.slowerWalk.get();
     }
 }

@@ -13,18 +13,14 @@ public class HungerManagerMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void update(Player player, CallbackInfo ci) {
-
         if (Energizer.removeHunger()) {
-
             ci.cancel();
         }
     }
 
     @Inject(method = "addExhaustion", at = @At("HEAD"), cancellable = true)
     public void addExhaustion(float exhaustion, CallbackInfo ci) {
-
         if (Energizer.removeHunger()) {
-
             ci.cancel();
         }
     }

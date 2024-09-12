@@ -1,10 +1,8 @@
 package com.gaura.energizer.mixin;
 
-import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.IPlayerEntity;
+import com.gaura.energizer.platform.MLConfig;
 import com.gaura.energizer.platform.Services;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Environment(EnvType.CLIENT)
 @Mixin(Entity.class)
 public class EntityMixin {
 
@@ -21,12 +18,12 @@ public class EntityMixin {
     private void modifyJumpHeight(CallbackInfoReturnable<Float> cir) {
 
         Minecraft client = Minecraft.getInstance();
-
-        if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && Services.PLATFORM.getConfig().lowerJump() && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
+        MLConfig config = Services.PLATFORM.getConfig();
+        if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && config.lowerJump() && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && config.disableStaminaInPeaceful())) {
 
             if (client.player != null && ((IPlayerEntity) client.player).getStopSprint()) {
 
-                cir.setReturnValue(cir.getReturnValue() * EnergizerFabric.CONFIG.lower_jump_multiplier);
+                cir.setReturnValue((float) (cir.getReturnValue() * config.lowerJumpMultiplier()));
             }
         }
     }
@@ -35,12 +32,12 @@ public class EntityMixin {
     private void modifyWalkSpeed(CallbackInfoReturnable<Float> cir) {
 
         Minecraft client = Minecraft.getInstance();
-
-        if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && EnergizerFabric.CONFIG.slower_walk && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
+        MLConfig config = Services.PLATFORM.getConfig();
+        if (client.player != null && !client.player.isCreative() && !client.player.isSpectator() && config.slowerWalk() && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && config.disableStaminaInPeaceful())) {
 
             if (client.player != null && ((IPlayerEntity) client.player).getStopSprint()) {
 
-                cir.setReturnValue(cir.getReturnValue() * EnergizerFabric.CONFIG.slower_walk_multiplier);
+                cir.setReturnValue((float) (cir.getReturnValue() * config.slowerWalkMultiplier()));
             }
         }
     }

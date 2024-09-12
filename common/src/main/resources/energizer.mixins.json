@@ -6,10 +6,15 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "CakeBlockMixin",
-    "LivingEntityInvoker"
+    "EntityMixin",
+    "HungerManagerMixin",
+    "LivingEntityInvoker",
+    "PlayerEntityMixin"
   ],
   "client": [
-    "InGameHudInvoker"
+    "ClientPlayerEntityMixin",
+    "InGameHudInvoker",
+    "InGameHudMixinHearts"
   ],
   "server": [
   ],

@@ -1,9 +1,8 @@
 package com.gaura.energizer.mixin;
 
-import com.gaura.energizer.EnergizerFabric;
 import com.gaura.energizer.IPlayerEntity;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import com.gaura.energizer.platform.MLConfig;
+import com.gaura.energizer.platform.Services;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.Difficulty;
@@ -12,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Environment(EnvType.CLIENT)
 @Mixin(LocalPlayer.class)
 public class ClientPlayerEntityMixin {
 
@@ -29,11 +27,14 @@ public class ClientPlayerEntityMixin {
 
             float currentStamina = iPlayerEntity.getStamina();
 
-            if (EnergizerFabric.CONFIG.can_continue_sprinting && (!stopSprint && (Minecraft.getInstance().options.keySprint.isDown() && EnergizerFabric.CONFIG.sprint_keybind))) {
+            MLConfig config = Services.PLATFORM.getConfig();
+
+            if (config.canContinueSprinting() && (!stopSprint && (Minecraft.getInstance().options.keySprint.isDown() && config.sprintKeybind()))) {
 
                 cir.setReturnValue(true);
             }
-            else if ((stopSprint || (!Minecraft.getInstance().options.keySprint.isDown() && EnergizerFabric.CONFIG.sprint_keybind) || (currentStamina <= 0.0F && !EnergizerFabric.CONFIG.disable_sprint_swim_empty_stamina)) && !client.player.isCreative() && !client.player.isSpectator() && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && EnergizerFabric.CONFIG.disable_stamina_in_peaceful)) {
+            else if ((stopSprint || (!Minecraft.getInstance().options.keySprint.isDown() && config.sprintKeybind()) ||
+                    (currentStamina <= 0.0F && !config.disableSprintSwimEmptyStamina())) && !client.player.isCreative() && !client.player.isSpectator() && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && config.disableStaminaInPeaceful())) {
 
                 cir.setReturnValue(false);
             }
