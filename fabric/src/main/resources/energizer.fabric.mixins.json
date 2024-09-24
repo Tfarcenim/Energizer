@@ -1,19 +1,20 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "com.gaura.energizer.mixin",
-    "refmap": "${mod_id}.refmap.json",
-    "compatibilityLevel": "JAVA_17",
-    "mixins": [
-    ],
-    "client": [
-        "InGameHudInvoker",
-        "InGameHudMixin",
-        "GuiMixinFabric"
-    ],
-    "injectors": {
-      "defaultRequire": 1
-    },
-    "plugin": "com.gaura.energizer.mixin.EnergizerMixinPlugin"
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.gaura.energizer.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "PlayerMixinFabric"
+  ],
+  "client": [
+    "GuiMixinFabric",
+    "InGameHudInvoker",
+    "InGameHudMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "plugin": "com.gaura.energizer.mixin.EnergizerMixinPlugin"
 }
   

@@ -1,5 +1,6 @@
 package com.gaura.energizer.mixin;
 
+import com.gaura.energizer.Energizer;
 import com.gaura.energizer.Huds;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.Gui;
@@ -20,8 +21,9 @@ public abstract class InGameHudMixinHearts {
                                      @Local(ordinal = 9) int k, @Local(ordinal = 10) int l,@Local(ordinal = 11) int m,
                                      @Local(ordinal = 12) int n,@Local(ordinal = 13) int o,@Local(ordinal = 14) int p,
                                      @Local(ordinal = 15) int q, @Local(ordinal = 16) int r) {
-
-        Huds.renderHealed(context, player, x, y, lines, regeneratingHeartIndex, maxHealth, lastHealth, health, absorption, blinking, heartType, i, j, k, l, m, n, o, p, q, r);
+        if (Energizer.removeHunger()) {
+            Huds.renderHealed(context, player, x, y, lines, regeneratingHeartIndex, maxHealth, lastHealth, health, absorption, blinking, heartType, i, j, k, l, m, n, o, p, q, r);
+        }
         return value;
     }
 }

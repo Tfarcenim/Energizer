@@ -3,8 +3,8 @@ package com.gaura.energizer.config;
 import java.util.Objects;
 
 public final class HealFood {
-    private final String food;
-    private final int heal_amount;
+    private String food;
+    private int heal_amount;
 
     public HealFood(String food, int heal_amount) {
         if (food == null) throw new NullPointerException();

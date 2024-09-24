@@ -3,11 +3,8 @@ package com.gaura.energizer.mixin;
 import com.gaura.energizer.Energizer;
 import com.gaura.energizer.IPlayerEntity;
 import com.gaura.energizer.init.ModObjects;
-import com.gaura.energizer.network.S2CSetStaminaPacket;
-import com.gaura.energizer.platform.Services;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -68,11 +65,6 @@ public class PlayerEntityMixin implements IPlayerEntity {
     }
 
 
-    @Inject(method = "aiStep", at = @At("HEAD"))
-    private void updateStamina(CallbackInfo ci) {
-        Energizer.playerTick((Player) (Object)this);
-    }
-
     @Override
     public float getStamina() {
         return stamina;
@@ -81,9 +73,6 @@ public class PlayerEntityMixin implements IPlayerEntity {
     @Override
     public void setStamina(float stamina) {
         this.stamina = stamina;
-        if ((Object) this instanceof ServerPlayer) {
-            Services.PLATFORM.sendToClient(new S2CSetStaminaPacket(stamina),(ServerPlayer) (Object) this);
-        }
     }
 
     @Override

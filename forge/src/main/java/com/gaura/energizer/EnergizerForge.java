@@ -3,6 +3,9 @@ package com.gaura.energizer;
 import com.gaura.energizer.init.ModObjects;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -11,6 +14,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.RegisterEvent;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mod(Energizer.MOD_ID)
 public class EnergizerForge {
@@ -31,7 +37,7 @@ public class EnergizerForge {
         if (FMLEnvironment.dist.isClient()) {
             EnergizerClient.init(bus);
         }
-
+        MinecraftForge.EVENT_BUS.addListener(this::playetTick);
         Energizer.init();
     }
 
@@ -51,6 +57,11 @@ public class EnergizerForge {
 
     void setup(FMLCommonSetupEvent event) {
         Energizer.addRecipes();
+    }
+    void playetTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            Energizer.playerTick(event.player);
+        }
     }
 
 }

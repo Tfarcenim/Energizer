@@ -106,7 +106,7 @@ public class Energizer {
                     } else if ((iPlayer.getStamina() < iPlayer.getMaxStamina()) && ((currentTime - iPlayer.getLastStaminaLossTime()) >= config.staminaRegenerationDelay())) {
 
                         iPlayer.setStamina((float) (iPlayer.getStamina() + staminaIncrease));
-                    } else if (iPlayer.getStamina() == iPlayer.getMaxStamina()) {
+                    } else if (iPlayer.getStamina() >= iPlayer.getMaxStamina()) {
 
                         iPlayer.setStopSprint(false);
                     }

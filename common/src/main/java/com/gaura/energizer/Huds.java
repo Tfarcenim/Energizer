@@ -8,6 +8,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
@@ -123,5 +124,29 @@ public class Huds {
         return index;
     }
 
+    public static Boolean shouldAllowSprinting(LocalPlayer player) {
+        Minecraft client = Minecraft.getInstance();
 
+        if (client.player != null) {
+
+            IPlayerEntity iPlayerEntity = (IPlayerEntity) client.player;
+
+            boolean stopSprint = iPlayerEntity.getStopSprint();
+
+            float currentStamina = iPlayerEntity.getStamina();
+
+            MLConfig config = Services.PLATFORM.getConfig();
+
+            if (config.canContinueSprinting() && (!stopSprint && (Minecraft.getInstance().options.keySprint.isDown() && config.sprintKeybind()))) {
+
+                return true;
+            }
+            else if ((stopSprint || (!Minecraft.getInstance().options.keySprint.isDown() && config.sprintKeybind()) ||
+                    (currentStamina <= 0.0F && !config.disableSprintSwimEmptyStamina())) && !client.player.isCreative() && !client.player.isSpectator() && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && config.disableStaminaInPeaceful())) {
+
+                return false;
+            }
+        }
+        return null;
+    }
 }

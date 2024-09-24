@@ -50,7 +50,9 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public void sendToClient(S2CModPacket msg, ServerPlayer player) {
-        PacketHandlerForge.sendToClient(msg, player);
+        if (player.connection != null) {
+            PacketHandlerForge.sendToClient(msg, player);
+        }
     }
 
     @Override
