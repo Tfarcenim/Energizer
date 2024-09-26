@@ -127,25 +127,14 @@ public class Huds {
     public static Boolean shouldAllowSprinting(LocalPlayer player) {
         Minecraft client = Minecraft.getInstance();
 
-        if (client.player != null) {
-
-            IPlayerEntity iPlayerEntity = (IPlayerEntity) client.player;
-
-            boolean stopSprint = iPlayerEntity.getStopSprint();
-
-            float currentStamina = iPlayerEntity.getStamina();
-
-            MLConfig config = Services.PLATFORM.getConfig();
-
-            if (config.canContinueSprinting() && (!stopSprint && (Minecraft.getInstance().options.keySprint.isDown() && config.sprintKeybind()))) {
-
-                return true;
-            }
-            else if ((stopSprint || (!Minecraft.getInstance().options.keySprint.isDown() && config.sprintKeybind()) ||
-                    (currentStamina <= 0.0F && !config.disableSprintSwimEmptyStamina())) && !client.player.isCreative() && !client.player.isSpectator() && client.gameMode != null && !(client.player.level().getDifficulty() == Difficulty.PEACEFUL && config.disableStaminaInPeaceful())) {
-
-                return false;
-            }
+        IPlayerEntity iPlayerEntity = (IPlayerEntity) player;
+        boolean stopSprint = iPlayerEntity.getStopSprint();
+        MLConfig config = Services.PLATFORM.getConfig();
+        if (config.canContinueSprinting() && (!stopSprint && (Minecraft.getInstance().options.keySprint.isDown() && config.sprintKeybind()))) {
+            return true;
+        }
+        else if ((stopSprint || (!Minecraft.getInstance().options.keySprint.isDown() && config.sprintKeybind())) && !player.isCreative() && !player.isSpectator() && client.gameMode != null && !(player.level().getDifficulty() == Difficulty.PEACEFUL && config.disableStaminaInPeaceful())) {
+            return false;
         }
         return null;
     }
